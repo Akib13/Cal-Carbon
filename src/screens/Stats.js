@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-export default function Favorites() {
+export default function Stats() {
   return (
     <View>
-      <Text>Favorites</Text>
+      <Text>Stats</Text>
     </View>
   )
 }
