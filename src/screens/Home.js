@@ -1,9 +1,31 @@
 import { Button, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import CustomButton from '../utils/CustomButton';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { setTripID, setTrips } from '../redux/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Home({ navigation }) {
+
+  const {trips} = useSelector(state => state.tripReducer);//new
+    const dispatch = useDispatch(); //new
+
+    useEffect(() => { //new
+        getTrips();
+    }, [])
+
+    const getTrips = () => {
+      AsyncStorage.getItem('Trips')
+      .then(trips => {
+          const parsedTasks = JSON.parse(trips);
+          if (parsedTasks && typeof parsedTasks === 'object') {
+              dispatch(setTrips(parsedTasks));
+          }
+      })
+      .catch(error => console.log(error))
+  };
+
   return (
     <View style={styles.body}>
       <View style={styles.text_view}>
@@ -15,7 +37,9 @@ export default function Home({ navigation }) {
         <View style={styles.btn_view_row}>
           <TouchableOpacity
             style={styles.button}
+            data = {trips}
             onPress={() => {
+                dispatch(setTripID(trips.length + 1)); //new
                 navigation.navigate('Trip');
             }}
           >

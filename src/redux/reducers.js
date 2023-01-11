@@ -1,21 +1,21 @@
-import { SET_TASKS, SET_TASK_ID } from './actions';
+import { SET_TRIPS, SET_TRIP_ID } from './actions';
 
 const initialState = {
-    tasks: [],
-    taskID: 1,
+    trips: [],
+    tripID: 1,
 }
 
 
-function taskReducer(state = initialState, action) {
+function tripReducer(state = initialState, action) {
     switch (action.type) {
-        case SET_TASKS:
-            return {...state, tasks: action.payload};
-        case SET_TASK_ID:
-            return {...state, taskID: action.payload};
+        case SET_TRIPS:
+            return {...state, trips: action.payload};
+        case SET_TRIP_ID:
+            return {...state, tripID: action.payload};
     
         default:
             return state;
     }
 }
 
-export default taskReducer;
+export default tripReducer;
