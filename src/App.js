@@ -11,7 +11,6 @@ import Stats from './screens/Stats';
 import Settings from './screens/Settings';
 import Trip from './screens/Trip';
 import History from './screens/History';
-import Favorites from './screens/Favorites';
 import Map from './screens/Map';
 import Result from './screens/Result';
 
@@ -54,21 +53,6 @@ function HomeStack() {
         <Stack.Screen
           name='History'
           component={History}
-          options={{ 
-            headerTitle:'CalCarbon',
-            headerTitleAlign: 'center',
-            headerStyle: {
-              backgroundColor: '#fff',
-            },
-            headerTitleStyle: {
-              fontWeight: 'bold',
-              fontSize: 30,
-            },
-          }}
-        />
-        <Stack.Screen
-          name='Favorites'
-          component={Favorites}
           options={{ 
             headerTitle:'CalCarbon',
             headerTitleAlign: 'center',
