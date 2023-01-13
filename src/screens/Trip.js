@@ -24,7 +24,7 @@ export default function Trip({ navigation }) {
     const [open, setOpen] = useState(false);
     const [favorites, setFavorites] = useState(false);
 
-    const [test, setTest] = useState(true);
+    const [test, setTest] = useState('');
   
     const data = [
         {key:'1', value:'Car'},
@@ -73,8 +73,8 @@ export default function Trip({ navigation }) {
             setVehicle(Trip.Vehicle);
             setCar(Trip.Car);
             setFuel(Trip.Fuel);
-            // setDate(Trip.Date);
-            // setFavorites(Trip.Favorites);
+            //setDate(Trip.Date);
+            setTest(Trip.Test)
             setIName(Trip.iname);
         }
     };
@@ -90,8 +90,8 @@ export default function Trip({ navigation }) {
                     Vehicle: vehicle,
                     Car: car,
                     Fuel: fuel,
-                    // Date: date,
-                    // Favorites: favorites,
+                    //Date: date,
+                    Test: test,
                     Iname: iname,
                 }
                 const index = trips.findIndex(trip => trip.ID === tripID);
@@ -116,6 +116,7 @@ export default function Trip({ navigation }) {
             }
         }
     };
+
 
   return (
     <ScrollView style={{ backgroundColor: '#fff' }}>
@@ -150,7 +151,6 @@ export default function Trip({ navigation }) {
                 />
             </View>
             : 
-            //<Text>Car NOT selected</Text>
             null
         }
         <Text>Departure address</Text>
@@ -210,6 +210,7 @@ export default function Trip({ navigation }) {
                 onConfirm={(date) => {
                     setOpen(false)
                     setDate(date)
+                    setTest(String(date))
                 }}
                 onCancel={() => {
                     setOpen(false)
@@ -252,7 +253,11 @@ export default function Trip({ navigation }) {
             :null
             }
         </View>
-        <Button title='Calculate Emission' onPress={() => { navigation.navigate('Result')}} />
+        <Button title='Calculate Emission' onPress={() => { navigation.navigate('Result',
+            { 
+                vehicle: vehicle,
+                car: car
+            })}} />
     </View>
     </ScrollView>
   )

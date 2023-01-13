@@ -8,10 +8,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Home({ navigation }) {
 
-  const {trips} = useSelector(state => state.tripReducer);//new
-    const dispatch = useDispatch(); //new
+  const {trips} = useSelector(state => state.tripReducer);
+    const dispatch = useDispatch(); 
 
-    useEffect(() => { //new
+    useEffect(() => { 
         getTrips();
     }, [])
 
@@ -39,7 +39,7 @@ export default function Home({ navigation }) {
             style={styles.button}
             data = {trips}
             onPress={() => {
-                dispatch(setTripID(trips.length + 1)); //new
+                dispatch(setTripID(trips.length + 1));
                 navigation.navigate('Trip');
             }}
           >

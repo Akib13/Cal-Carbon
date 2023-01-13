@@ -37,6 +37,16 @@ export default function History({ navigation }) {
         .catch(error => console.log(error))
     };
 
+    const deleteTrip = (id) => {
+      const filteredTasks = trips.filter(trip => trip.ID !== id);
+      AsyncStorage.setItem('Trips', JSON.stringify(filteredTasks))
+      .then(() => {
+          dispatch(setTrips(filteredTasks));
+          Alert.alert('Success!', 'Task removed successfully.');
+      })
+      .catch(error => console.log(error));
+  };
+
   return (
     <View style={styles.body}> 
       {type==='' ? 
@@ -95,8 +105,18 @@ export default function History({ navigation }) {
                         style = {styles.subtitle}
                         numberOfLines= {1}
                     >
-                        {item.Fuel}
+                        {item.Fuel} {item.Test}
                     </Text>
+                    <TouchableOpacity
+                            style={styles.delete}
+                            onPress={() => {deleteTrip(item.ID)}}
+                        >
+                            <FontAwesome5 
+                                name={'trash'}
+                                size={25}
+                                color={'#ff3636'}
+                            />
+                      </TouchableOpacity>
                   </View>
                 
                 : 
