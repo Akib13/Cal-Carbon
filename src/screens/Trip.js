@@ -23,6 +23,7 @@ export default function Trip({ navigation }) {
     const [date, setDate] = useState(new Date());
     const [open, setOpen] = useState(false);
     const [favorites, setFavorites] = useState(false);
+    const [distance, setDistance] = useState('');
 
     const [test, setTest] = useState('');
   
@@ -30,24 +31,33 @@ export default function Trip({ navigation }) {
         {key:'1', value:'Car'},
         {key:'2', value:'Bus'},
         {key:'3', value:'Train'},
-        {key:'4', value:'Plain', disabled:true},
+        {key:'4', value:'Plane'},
         {key:'5', value:'Walk', disabled:true},
         {key:'6', value:'Bike'},
-        {key:'7', value:'Other'},
+        {key:'7', value:'Motorbike'},
+        {key:'8', value:'Moped'},
+        {key:'9', value:'Other'},
     ];
 
     const data_1 = [
-        {key:'1', value:'Gas Car'},
-        {key:'2', value:'Fuel Car'},
-        {key:'3', value:'Electric Car'},
-        {key:'4', value:'Other'},
+        {key:'1', value:'Small car'},
+        {key:'2', value:'Medium car'},
+        {key:'3', value:'Large car'},
+        {key:'4', value:'Luxury car'},
+        {key:'5', value:'Sports car'},
+        {key:'6', value:'Pickup truck'},
+        {key:'7', value:'Unknown'},
+    ];
+
+    const data_bus = [
+        {key:'1', value:'City bus'},
+        {key:'2', value:'Long Distance'}
     ];
 
     const data_2 = [
-        {key:'1', value:'Gas'},
-        {key:'2', value:'Fuel'},
-        {key:'3', value:'Electricity'},
-        {key:'4', value:'Other'},
+        {key:'1', value:'Petrol'},
+        {key:'2', value:'Electricity'},
+        {key:'3', value:'Other'},
     ];
 
     
@@ -57,7 +67,7 @@ export default function Trip({ navigation }) {
         {name: 'Travel'},
         {name: 'Gym'},
         {name: 'Other'},
-      ];
+    ];
 
     const [iname, setIName] = useState("Other");
 
@@ -153,6 +163,47 @@ export default function Trip({ navigation }) {
             : 
             null
         }
+        {vehicle === 'Bus' ? 
+            <View>
+                <Text>Type of Bus</Text>
+                <SelectList
+                    boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
+                    setSelected={(val) => setCar(val)} 
+                    data={data_bus} 
+                    save="value"
+                />
+                <Text>Type of fuel</Text>
+                <SelectList
+                    boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
+                    setSelected={(val) => setFuel(val)} 
+                    data={data_2} 
+                    save="value"
+                />
+                <Text>Number of Passengers</Text>
+                <TextInput
+                    style={styles.input}
+                />
+            </View>
+            : 
+            null
+        }
+        {vehicle === 'Motorbike' ? 
+            <View>
+                <Text>Type of fuel</Text>
+                <SelectList
+                    boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
+                    setSelected={(val) => setFuel(val)} 
+                    data={data_2} 
+                    save="value"
+                />
+                <Text>Number of Passengers</Text>
+                <TextInput
+                    style={styles.input}
+                />
+            </View>
+            : 
+            null
+        }
         <Text>Departure address</Text>
         <View style={styles.date_view}>
             <TextInput style={{ width: '90%'}} />
@@ -187,6 +238,8 @@ export default function Trip({ navigation }) {
         <Text>Total distance</Text>
         <TextInput
             style={styles.input}
+            value={distance}
+            onChangeText={(value) => setDistance(value)}
         />
         <Text>Date of trip</Text>
         <View style={styles.date_view}>
@@ -256,7 +309,9 @@ export default function Trip({ navigation }) {
         <Button title='Calculate Emission' onPress={() => { navigation.navigate('Result',
             { 
                 vehicle: vehicle,
-                car: car
+                car: car,
+                fuel: fuel,
+                distance: distance
             })}} />
     </View>
     </ScrollView>
