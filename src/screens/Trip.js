@@ -9,8 +9,25 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { setTrips } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 // import RNFS from 'react-native-fs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import SQLite from 'react-native-sqlite-storage';
 
+const db = SQLite.openDatabase(
+    {
+        name: 'MainDB',
+        location: 'default',
+    },
+    () => {},
+    error => {console.log(error)},
+);
+
+/*const del = SQLite.deleteDatabase(
+    {name: 'MainDB', location: 'default'},  
+    () => { console.log('db deleted');  },
+    error => {
+        console.log("ERROR: " + error); 
+    }
+);*/
 
 export default function Trip({ navigation }) {
 
@@ -69,33 +86,62 @@ export default function Trip({ navigation }) {
         {name: 'Other'},
     ];
 
-    const [iname, setIName] = useState("Other");
+    const [iname, setIName] = useState("");
 
     useEffect(() => {
-        navigation.addListener('focus', ()=> {
+        /*navigation.addListener('focus', ()=> {
             getTrip();
-        });
+        });*/
+        createTable();
+        //getTrip();
     }, []);
 
+    const createTable = () => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "CREATE TABLE IF NOT EXISTS "
+                + "Trips "
+                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, Vehicle TEXT, Vehicle_Type TEXT, Fuel TEXT, Distance INTEGER, Date TEXT, Category TEXT, Emission INTEGER);"
+            )
+        })
+    };
+
     const getTrip = () => {
-        const Trip = trips.find(trip => trip.ID === tripID);
+        /*const Trip = trips.find(trip => trip.ID === tripID);
         if (Trip) {
             setVehicle(Trip.Vehicle);
             setCar(Trip.Car);
             setFuel(Trip.Fuel);
             //setDate(Trip.Date);
-            setTest(Trip.Test)
-            setIName(Trip.iname);
-        }
+            setTest(Trip.Test);
+            setIName(Trip.Iname);*/
+
+            try {
+                db.transaction((tx) => {
+                    tx.executeSql(
+                        "SELECT Vehicle, Distance FROM Trips",
+                        [],
+                        (tx, results) => {
+                            var len = results.rows.length;
+                            if (len > 0) {
+                                navigation.navigate('Map');
+                            }
+                        }
+                    )
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        //}
     };
 
-    const setTrip = () => {
+    const setTrip = async () => {
         if (vehicle.length == 0) {
             Alert.alert('warning', 'Please write your task title.')
         }
         else {
             try {
-                var Trip = {
+                /*var Trip = {
                     ID: tripID,
                     Vehicle: vehicle,
                     Car: car,
@@ -103,24 +149,32 @@ export default function Trip({ navigation }) {
                     //Date: date,
                     Test: test,
                     Iname: iname,
-                }
-                const index = trips.findIndex(trip => trip.ID === tripID);
+                }*/
+                /*const index = trips.findIndex(trip => trip.ID === tripID);
                 let newTrips = [];
                 if (index > -1) {
                     newTrips = [...trips];
                     newTrips[index] = Trip;
                 } else {
                     newTrips = [...trips, Trip];
-                }
+                }*/
 
-                AsyncStorage.setItem('Trips', JSON.stringify(newTrips))
+                /*AsyncStorage.setItem('Trips', JSON.stringify(newTrips))
                 .then(() => {
                     dispatch(setTrips(newTrips));
                     Alert.alert('Success!', 'Task saved successfully.');
                     setFavorites(false);
                     navigation.goBack();
                 })
-                .catch(error => console.log(error))
+                .catch(error => console.log(error))*/
+
+                await db.transaction( async (tx) => {
+                    await tx.executeSql(
+                        "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel, Distance, Date, Category) VALUES (?,?,?,?,?,?)",
+                        [vehicle, car, fuel, distance, test, iname]
+                    );
+                })
+                //navigation.navigate("Map");
             } catch (error) {
                 console.log(error);
             }
