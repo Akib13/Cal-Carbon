@@ -8,7 +8,9 @@ export default function DropdownMenu({choice}) {
       {value: 'Total emissions', key: 'bar'},
       {value: 'Total kilometers', key: 'km'},
       {value: 'Emissions compared to baseline', key: 'em'},
-      {value: 'Trips per method', key: 'tripsPerMethod'}
+      {value: 'Trips per method', key: 'tripsPerMethod'},
+      {value: 'Number of trips', key: 'numberOfTrips'},
+      {value: 'Average emissions', key: 'averageEmissions'}
     ];
 
     useEffect(() => {

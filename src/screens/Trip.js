@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // import RNFS from 'react-native-fs';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import SQLite from 'react-native-sqlite-storage';
+import dayjs from 'dayjs';
 
 const db = SQLite.openDatabase(
     {
@@ -167,11 +168,19 @@ export default function Trip({ navigation }) {
                     navigation.goBack();
                 })
                 .catch(error => console.log(error))*/
+                console.log("-----SETTING TRIP-------");
+                console.log("Date: " + date);
 
                 await db.transaction( async (tx) => {
                     await tx.executeSql(
                         "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel, Distance, Date, Category) VALUES (?,?,?,?,?,?)",
-                        [vehicle, car, fuel, distance, test, iname]
+                        [vehicle, car, fuel, distance, dayjs(date).format(), iname]
+                    );
+                    await tx.executeSql('SELECT * FROM Trips', [], (tx, results) => {
+                        for (let i = 0; i < results.rows.length; i++){
+                            console.log(JSON.stringify(results.rows.item(i)));
+                        }    
+                    }
                     );
                 })
                 //navigation.navigate("Map");
@@ -360,13 +369,15 @@ export default function Trip({ navigation }) {
             :null
             }
         </View>
-        <Button title='Calculate Emission' onPress={() => { navigation.navigate('Result',
+        <Button title='Calculate Emission' onPress={() => { 
+            setTrip();
+            navigation.navigate('Result',
             { 
                 vehicle: vehicle,
                 car: car,
                 fuel: fuel,
                 distance: distance
-            })}} />
+            });}} />
     </View>
     </ScrollView>
   )

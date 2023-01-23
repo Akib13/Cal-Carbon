@@ -1,5 +1,5 @@
 import { View } from "react-native"
-import TextButton from "./TextButton";
+import TextButton from "../Components/TextButton";
 
 export const timeFrameEnum = {
     1: "1 week",

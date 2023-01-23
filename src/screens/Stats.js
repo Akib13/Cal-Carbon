@@ -1,26 +1,10 @@
-/*import { StyleSheet, View } from 'react-native'
-import React from 'react'
 import DropdownMenu from '../Components/DropDownMenu';
-import { useState } from 'react';
 import GraphView from '../Components/GraphView';
-
-export default function Stats() {
-    const [choice, setChoice] = useState('pie');
-
-    return (
-      <View style={{backgroundColor: '#ffffff', height: '100%'}}>
-        <View style={{marginTop: 20, alignContent: 'flex-start'}}>
-            <View style={{zIndex: 1}}>
-                <DropdownMenu choice={setChoice}/>
-            </View>
-            <GraphView choice={choice} />
-        </View>
-      </View>
-    )*/
 import { StyleSheet, Text, View } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import SQLite from 'react-native-sqlite-storage';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import TimeFramePicker from '../utils/TimeFramePicker';
+import dayjs from 'dayjs';
 
 const db = SQLite.openDatabase(
   {
@@ -34,23 +18,25 @@ const db = SQLite.openDatabase(
 export default function Stats() {
 
   const [emission, setEmission] = useState('');
+  const [choice, setChoice] = useState('pie');
+  const [timeFrame, setTimeFrame] = useState(1);
+  const endDate = dayjs().format();
+  const [startDate, setStartDate] = useState(dayjs().subtract(6, 'days').format());
 
   useEffect(() => {
+    console.log("Getting data between " + startDate + " and " + endDate);
     getData();
-  }, []);
+  }, [startDate]);
 
   const getData = () => {
     try {
       db.transaction((tx) => {
         tx.executeSql(
-          "SELECT * FROM Trips",
+          `SELECT * FROM Trips where Date between '${startDate}' and '${endDate}'`,
           [],
           (tx, results) => {
-            var temp = 0;
-            for (let i = 0; i < results.rows.length; ++i){
-              temp += results.rows.item(i).Emission;
-            }
-            setEmission(temp);
+            setEmission(results);
+            console.log("REsults: " + JSON.stringify(results));
           }
         );
       });
@@ -59,10 +45,39 @@ export default function Stats() {
     }
   };
 
+  useEffect(() => {
+    setTimeFrame(1);
+  }, [choice]);
+
+  useEffect(() => {
+    switch(timeFrame) {
+      case 1:
+        setStartDate(dayjs().subtract(6, 'days').format());
+        break;
+      case 2:
+        setStartDate(dayjs().subtract(1, 'month').format());
+        break;
+      case 3:
+        setStartDate(dayjs().subtract(3, 'month').format());
+        break;
+      case 4:
+        setStartDate(dayjs().subtract(6, 'month').format());
+        break;
+      case 5:
+        setStartDate(dayjs().subtract(1, 'year').format());
+        break;
+    }
+  }, [timeFrame]);
+
   return (
-    <View style={styles.body}>
-      <Text style={styles.text}>Your total emission</Text>
-      <Text style={styles.text}>{emission}</Text>
+    <View style={{backgroundColor: '#ffffff', height: '100%'}}>
+      <View style={{marginTop: 20, alignContent: 'flex-start'}}>
+          <View style={{zIndex: 1}}>
+              <DropdownMenu choice={setChoice}/>
+          </View>
+          <GraphView choice={choice} timeFrame={timeFrame}/>
+          <TimeFramePicker choice={(x) => setTimeFrame(x)} chosen={timeFrame} />
+      </View>
     </View>
   )
 }

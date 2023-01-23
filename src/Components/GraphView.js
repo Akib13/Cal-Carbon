@@ -1,80 +1,12 @@
-import { useState } from 'react';
-import { Dimensions, View, Text } from 'react-native';
-import { PieChart, BarChart, ContributionGraph } from 'react-native-chart-kit';
-import TimeFramePicker , {timeFrameEnum} from './TimeFramePicker';
-import TestGraph from './TestGraph';
-
-const data = [
-    {
-      name: "Walk",
-      emissions: 0,
-      color: "rgba(131, 167, 234, 1)",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Bike",
-      emissions: 0,
-      color: "#01781d",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Car",
-      emissions: 5276,
-      color: "red",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Bus",
-      emissions: 853,
-      color: "#92d4a4",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Train",
-      emissions: 50,
-      color: "rgb(0, 0, 255)",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    }
-  ];
-
-  const barData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Nov", "Dec"],
-    datasets: [
-      {
-        data: [20, 45, 28, 80, 99, 43, 0, 0, 0, 0, 0],
-        colors: [
-          (opacity = 1) => '#BE95FF',
-          (opacity = 1) => '#fcba03',
-          (opacity = 1) => '#fc0303',
-          (opacity = 1) => '#035efc',
-          (opacity = 1) => '#c203fc',
-          (opacity = 1) => '#fc03be',
-        ]
-      }
-    ]
-  };
-
-  const kmData = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [
-      {
-        data: [200, 40, 280, 150, 99, 143],
-        colors: [
-          (opacity = 1) => '#BE95FF',
-          (opacity = 1) => '#fcba03',
-          (opacity = 1) => '#fc0303',
-          (opacity = 1) => '#035efc',
-          (opacity = 1) => '#c203fc',
-          (opacity = 1) => '#fc03be',
-        ]
-      }
-    ]
-  };
+import { View } from 'react-native';
+import {timeFrameEnum} from '../utils/TimeFramePicker';
+import EmissionsPerMethod from './EmissionsPerMethod';
+import EmissionsByTime from './EmissionsByTime';
+import TotalKilometers from './TotalKilometers';
+import EmissionsVsBaseline from './EmissionsVsBaseline';
+import TripsPerMethod from './TripsPerMethod';
+import TripsByTime from './TripsByTime';
+import AverageEmissions from './AverageEmissions';
 
   const baselineData = [
       {date: "2022-01-09", count: 0}, 
@@ -85,44 +17,6 @@ const data = [
       {date: "2022-01-14", count: 0.2},
       {date: "2022-01-15", count: 0.2}
     ];
-
-  const perMethodData = [
-    {
-      name: "Walk",
-      trips: 10,
-      color: "rgba(131, 167, 234, 1)",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Bike",
-      trips: 50,
-      color: "#01781d",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Car",
-      trips: 52,
-      color: "red",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Bus",
-      trips: 8,
-      color: "#ffffff",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Train",
-      trips: 2,
-      color: "rgb(0, 0, 255)",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    }
-  ];
 
   const chartConfig={
     backgroundColor: "#ffffff",
@@ -141,105 +35,53 @@ const data = [
     }
   };
 
-  const baselineDataColors = ["red", "green"];
-
-function renderGraph(choice, timeFrame){
+function renderGraph(choice, timeFrame, data){
     console.log(timeFrameEnum[timeFrame]);
 
     switch(choice) {
         case 'pie':
-          return (
-            <View style={{backgroundColor: '#ffffff'}}>
-              <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Emissions per transportation method</Text>
-              <PieChart
-              style={{
-                  marginTop: 50
-                }}
-                data={data}
-                width={Dimensions.get("window").width}
-                height={200}
-                chartConfig={chartConfig}
-                accessor={"emissions"}
-                backgroundColor={"transparent"}
-                paddingLeft={"15"}
-                avoidFalseZero={true}>    
-              </PieChart>
-            </View>);
+          return (<EmissionsPerMethod data={data} chartConfig={chartConfig} />);
         case 'bar':
-          console.log("Martin on paras");
-          return(
-            <View>
-              <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Total emissions this year</Text>
-              <BarChart
-                style={{
-                  marginTop: 80,
-                  alignItems: 'center'
-                }}
-                data={barData}
-                width={Dimensions.get("window").width -20}
-                height={220}
-                yAxisLabel="g CO2e"
-                chartConfig={chartConfig}
-                verticalLabelRotation={0}
-                withCustomBarColorFromData={true}
-                fromZero={true}
-                flatColor={true}
-              />
-            </View>);
+          return(<EmissionsByTime data={data} chartConfig={chartConfig} timeFrame={timeFrame} />);
           case 'km':
-            return(
-              <View>
-                <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Total kilometers travelled this year</Text>
-                <BarChart
-                  style={{
-                    marginVertical: 50,
-                    alignItems: 'center'
-                  }}
-                  data={kmData}
-                  width={Dimensions.get("window").width - 20}
-                  height={220}
-                  yAxisLabel="km "
-                  chartConfig={chartConfig}
-                  verticalLabelRotation={0}
-                  withCustomBarColorFromData={true}
-                  fromZero={true}
-                  showBarTops={false}
-                />
-              </View>);
+            return(<TotalKilometers data={data} chartConfig={chartConfig} timeFrame={timeFrame} />);
           case 'em':
-            return(
-            <TestGraph chartConfig={chartConfig}/>
-            );
+            return(<EmissionsVsBaseline data={data} chartConfig={chartConfig}/>);
           case 'tripsPerMethod':
-            return (
-              <View>
-                <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Trips per transportation method</Text>
-                <PieChart
-                style={{
-                    marginTop: 50
-                  }}
-                  data={perMethodData}
-                  width={Dimensions.get("window").width}
-                  height={200}
-                  chartConfig={chartConfig}
-                  accessor={"trips"}
-                  backgroundColor={"transparent"}
-                  paddingLeft={"15"}
-                  absolute={true}>    
-                </PieChart>
-              </View>);
+            return(<TripsPerMethod data={data} chartConfig={chartConfig}/>);
+          case 'numberOfTrips':
+            return(<TripsByTime data={data} chartConfig={chartConfig} timeFrame={timeFrame} />);
+          case 'averageEmissions':
+            return(<AverageEmissions data={data} chartConfig={chartConfig} timeFrame={timeFrame} />);
     }
 }
 
-function GraphView({choice}){
-
-    const [timeFrame, setTimeFrame] = useState(1);
-    console.log(timeFrame);
-
+function GraphView({choice, timeFrame}){
+  let testdata = [
+    {vehicle_type: 'car', emissions: 50, date: '2022-11-20'},
+    {vehicle_type: 'plane', emissions: 120, date: '2022-11-25'},
+    {vehicle_type: 'car', emissions: 60, date: '2022-12-02'},
+    {vehicle_type: 'car', emissions: 500, date: '2022-12-20'},
+    {vehicle_type: 'train', emissions: 50, date: '2022-12-31'},
+    {vehicle_type: 'escooter', emissions: 50, date: '2023-01-01'},
+    {vehicle_type: 'moped', emissions: 20, date: '2023-01-01'},
+    {vehicle_type: 'motorbike', emissions: 10, date: '2023-01-10'},
+    {vehicle_type: 'motorbike', emissions: 70, date: '2023-01-15'},
+    {vehicle_type: 'plane', emissions: 500, date: '2023-01-15'},
+    {vehicle_type: 'car', emissions: 50, date: '2023-01-16'},
+    {vehicle_type: 'electricbike', emissions: 50, date: '2023-01-16'},
+    {vehicle_type: 'car', emissions: 50, date: '2023-01-17'},
+    {vehicle_type: 'car', emissions: 35, date: '2023-01-17'},
+    {vehicle_type: 'train', emissions: 50, date: '2023-01-18'},
+    {vehicle_type: 'train', emissions: 50, date: '2023-01-18'},
+    {vehicle_type: 'escooter', emissions: 50, date: '2023-01-20'},
+    {vehicle_type: 'motorbike', emissions: 50, date: '2023-01-20'},
+    {vehicle_type: 'walk', emissions: 50, date: '2023-01-21'},
+    {vehicle_type: 'bike', emissions: 50, date: '2023-01-22'}
+  ]
     return(
         <View>
-            {renderGraph(choice, timeFrame)}
-            <TimeFramePicker choice={(x) => setTimeFrame(x)} chosen={timeFrame} />
+            {renderGraph(choice, timeFrame, testdata)}
         </View>
         )
 }

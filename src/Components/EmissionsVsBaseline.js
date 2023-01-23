@@ -27,7 +27,7 @@ function InfoBlock(day) {
     );
 }
 
-export default function TestGraph({chartConfig}){
+export default function EmissionsVsBaseline({data, chartConfig}){
     const [open, setOpen] = useState(false);
     const [day, setDay] = useState(null);
 

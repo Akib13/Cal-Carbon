@@ -85,13 +85,20 @@ export default function Result({ route, navigation }) {
             }
             await AsyncStorage.mergeItem('UserData', JSON.stringify(user));
             Alert.alert("Success!", "Your data has been updated.");*/
+            console.log("Saving data");
             db.transaction((tx)=> {
                 tx.executeSql(
                     "UPDATE Trips SET Emission=? WHERE ID=?",
                     [total_emission, Id],
                     () => {Alert.alert("Success!", "Your data has been updated.")},
                     error => {console.log(error)}
-                )
+                );
+                tx.executeSql('SELECT * FROM Trips', [], (tx, results) => {
+                  for (let i = 0; i < results.rows.length; i++){
+                      console.log(JSON.stringify(results.rows.item(i)));
+                  }    
+              }
+              );
             })
             
         } catch (error) {
