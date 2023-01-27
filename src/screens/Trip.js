@@ -6,7 +6,7 @@ import DatePicker from 'react-native-date-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import CheckBox from '@react-native-community/checkbox';
 import { ScrollView } from 'react-native-gesture-handler';
-import { setTrips } from '../redux/actions';
+import { setTrips, getEmission } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 // import RNFS from 'react-native-fs';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -31,7 +31,7 @@ const db = SQLite.openDatabase(
 
 export default function Trip({ navigation }) {
 
-    const {trips, tripID} = useSelector(state => state.tripReducer);
+    const { emission, trips, tripID } = useSelector(state => state.tripReducer);
     const dispatch = useDispatch();
 
     const [vehicle, setVehicle] = useState("");
@@ -41,8 +41,12 @@ export default function Trip({ navigation }) {
     const [open, setOpen] = useState(false);
     const [favorites, setFavorites] = useState(false);
     const [distance, setDistance] = useState('');
+    const [iname, setIName] = useState("");
 
-    const [test, setTest] = useState('');
+    const [test, setTest] = useState(""+date.toISOString().split('T')[0]);
+    
+
+    let total_emission;
   
     const data = [
         {key:'1', value:'Car'},
@@ -86,13 +90,15 @@ export default function Trip({ navigation }) {
         {name: 'Other'},
     ];
 
-    const [iname, setIName] = useState("");
+    
 
     useEffect(() => {
         /*navigation.addListener('focus', ()=> {
             getTrip();
         });*/
+        dispatch(getEmission());
         createTable();
+        //date_converter();
         //getTrip();
     }, []);
 
@@ -115,24 +121,37 @@ export default function Trip({ navigation }) {
             //setDate(Trip.Date);
             setTest(Trip.Test);
             setIName(Trip.Iname);*/
-
-            try {
-                db.transaction((tx) => {
-                    tx.executeSql(
-                        "SELECT Vehicle, Distance FROM Trips",
-                        [],
-                        (tx, results) => {
-                            var len = results.rows.length;
-                            if (len > 0) {
-                                navigation.navigate('Map');
-                            }
-                        }
-                    )
-                })
-            } catch (error) {
-                console.log(error);
-            }
         //}
+        try {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    "SELECT ID, Vehicle, Vehicle_Type, Fuel, Distance, Date, Category FROM Trips WHERE ID=1",
+                    [],
+                    (tx, results) => {
+                        var len = results.rows.length;
+                        if (len > 0) {
+                            //var DB_id = results.rows.item(0).ID;
+                            var db_vehicle = results.rows.item(0).Vehicle;
+                            var db_distance = results.rows.item(0).Distance;
+                            var db_category = results.rows.item(0).Category;
+                            var db_vehicleType = results.rows.item(0).Vehicle_Type;
+                            var db_fuel = results.rows.item(0).Fuel;
+                            var dbDate = results.rows.item(0).Date;
+    
+                            //setID(DB_id);
+                            setVehicle(db_vehicle);
+                            setDistance(db_distance);
+                            setIName(db_category);
+                            setFuel(db_fuel);
+                            setCar(db_vehicleType);
+                            setTest(dbDate);
+                        }
+                    }
+                )
+            })
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const setTrip = async () => {
@@ -170,8 +189,8 @@ export default function Trip({ navigation }) {
 
                 await db.transaction( async (tx) => {
                     await tx.executeSql(
-                        "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel, Distance, Date, Category) VALUES (?,?,?,?,?,?)",
-                        [vehicle, car, fuel, distance, test, iname]
+                        "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel, Distance, Date, Category, Emission) VALUES (?,?,?,?,?,?,?)",
+                        [vehicle, car, fuel, distance, test, iname, total_emission]
                     );
                 })
                 //navigation.navigate("Map");
@@ -180,6 +199,24 @@ export default function Trip({ navigation }) {
             }
         }
     };
+
+    /*const date_converter = () => {
+        var date_test = date;
+        const new_date = date_test.toISOString().split('T')[0]; //date_test.toISOString().substring(0, 10);
+        console.log(new_date);
+        setTest(new_date);
+
+        var d = date;
+        d = new Date(d.getTime() - 3000000);
+        var date_format_str = d.getFullYear().toString()+"-"+((d.getMonth()+1).toString().length==2?(d.getMonth()+1).toString():"0"+(d.getMonth()+1).toString())+"-"+(d.getDate().toString().length==2?d.getDate().toString():"0"+d.getDate().toString())+" "+(d.getHours().toString().length==2?d.getHours().toString():"0"+d.getHours().toString())+":"+((parseInt(d.getMinutes()/5)*5).toString().length==2?(parseInt(d.getMinutes()/5)*5).toString():"0"+(parseInt(d.getMinutes()/5)*5).toString())+":00";
+        console.log(date_format_str.substring(0,10));
+    }*/
+
+    const calculate = (a_emission) => {
+        const avg_emission = a_emission, passengers = 1;
+        total_emission = (distance * avg_emission)/passengers;
+        return (total_emission);
+      };
 
 
   return (
@@ -297,7 +334,7 @@ export default function Trip({ navigation }) {
         />
         <Text>Date of trip</Text>
         <View style={styles.date_view}>
-            <TextInput editable={false} selectTextOnFocus={false} style={{ width: '90%'}} placeholder={String(date)} />
+            <TextInput editable={false} selectTextOnFocus={false} style={{ width: '90%'}} placeholder={test} />
             <TouchableOpacity
               onPress={() => {
                 setOpen(true);
@@ -315,9 +352,10 @@ export default function Trip({ navigation }) {
                 date={date}
                 mode="date"
                 onConfirm={(date) => {
-                    setOpen(false)
                     setDate(date)
-                    setTest(String(date))
+                    //date_converter()
+                    setTest(date.toISOString().split('T')[0])
+                    setOpen(false)
                 }}
                 onCancel={() => {
                     setOpen(false)
@@ -352,7 +390,7 @@ export default function Trip({ navigation }) {
                         )}
                         />
                         <Text>{iname}</Text>
-                        <Button title='OK' onPress={setTrip} />
+                        <Button title='OK' onPress={() => {setFavorites(false)}} />
                         <Button title='Cancel' onPress={() => {setFavorites(false)}}/>
                     </View>
 
@@ -360,6 +398,25 @@ export default function Trip({ navigation }) {
             :null
             }
         </View>
+        {emission.map((item, id) => {
+            key={id}
+            //console.log(item, id);
+            return (
+            <View key={id}>
+                { item.vehicle === vehicle &&
+                item.vehicle_type === car &&
+                item.fuel_type === fuel
+                ?
+                    <View>
+                    <Text style={styles.result_text}>
+                        {calculate(item.emission)} g CO2 -ekv
+                    </Text>
+                    </View>
+                : null}
+            </View>
+            )
+        })}
+        <Button title='Save' onPress={setTrip} />
         <Button title='Calculate Emission' onPress={() => { navigation.navigate('Result',
             { 
                 vehicle: vehicle,

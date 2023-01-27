@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import SQLite from 'react-native-sqlite-storage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -12,12 +12,16 @@ const db = SQLite.openDatabase(
   error => {console.log(error)},
 );
 
-export default function Stats() {
+export default function Stats({ navigation }) {
 
   const [emission, setEmission] = useState('');
+  const [test, setTest] = useState('');
 
   useEffect(() => {
-    getData();
+    navigation.addListener('focus', ()=> {
+      getData();
+      getDataTest();
+    });
   }, []);
 
   const getData = () => {
@@ -40,10 +44,32 @@ export default function Stats() {
     }
   };
 
+  const getDataTest = () => {
+    try {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "SELECT SUM(Emission) AS TEST FROM Trips",
+          [],
+          (tx, results) => {
+            console.log(results.rows.item(0).TEST);
+            var len = results.rows.length;
+                  if (len > 0) {
+                      var DB_test = results.rows.item(0).TEST;
+                      setTest(DB_test);
+                  }
+          }
+        );
+      });
+    } catch (error) {
+        console.log(error);
+    }
+  };
+
   return (
     <View style={styles.body}>
       <Text style={styles.text}>Your total emission</Text>
       <Text style={styles.text}>{emission}</Text>
+      <Text style={styles.text}>{test}</Text>
     </View>
   )
 }
