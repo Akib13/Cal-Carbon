@@ -1,15 +1,29 @@
 import { View, Text, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import dayjs from "dayjs";
-import isoWeek from "dayjs/plugin/isoWeek";
 
-function formatAverageEmissionsTimePeriodData(data, timeFrame){
+function getAverage(total, amount){
+  if(amount !== 0){
+    return (total / amount).toFixed(1);
+  }
+  else {
+    return 0;
+  }
+}
+
+function formatAverageEmissionsTimePeriodData(data){
     let barData = {
       labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Nov", "Dec"],
       datasets: [
         {
-          data: [20, 45, 28, 80, 99, 43, 0, 0, 0, 0, 0],
+          data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           colors: [
+            (opacity = 1) => '#BE95FF',
+            (opacity = 1) => '#fcba03',
+            (opacity = 1) => '#fc0303',
+            (opacity = 1) => '#035efc',
+            (opacity = 1) => '#c203fc',
+            (opacity = 1) => '#fc03be',
             (opacity = 1) => '#BE95FF',
             (opacity = 1) => '#fcba03',
             (opacity = 1) => '#fc0303',
@@ -20,74 +34,171 @@ function formatAverageEmissionsTimePeriodData(data, timeFrame){
         }
       ]
     };
-  
-    switch(timeFrame){
-      case 1:
-        barData.labels = [
-          dayjs().subtract(6, 'days').format('dddd').slice(0,3),
-          dayjs().subtract(5, 'days').format('dddd').slice(0,3),
-          dayjs().subtract(4, 'days').format('dddd').slice(0,3),
-          dayjs().subtract(3, 'days').format('dddd').slice(0,3),
-          dayjs().subtract(2, 'days').format('dddd').slice(0,3),
-          dayjs().subtract(1, 'days').format('dddd').slice(0,3),
-          dayjs().format('dddd')];
-        barData.datasets[0].data = [10, 20, 30, 15, 5, 50, 42];
-        break;
-      case 2:
-        dayjs.extend(isoWeek);
-        barData.labels = [
-          "Week " + dayjs().subtract(3, 'weeks').isoWeek(),
-          "Week " + dayjs().subtract(2, 'weeks').isoWeek(),
-          "Week " + dayjs().subtract(1, 'weeks').isoWeek(),
-          "Week " + dayjs().isoWeek(),
-        ];
-        barData.datasets[0].data = [4, 6, 8, 9];
-        break;
-      case 3:
-        barData.labels = [
-          dayjs().subtract(2, 'month').format('MMMM'),
-          dayjs().subtract(1, 'month').format('MMMM'),
-          dayjs().format('MMMM'),
-        ];
-        barData.datasets[0].data = [150, 50, 320];
-        break;
-      case 4:
-        barData.labels = [
-          dayjs().subtract(5, 'month').format('MMMM').slice(0,3),
-          dayjs().subtract(4, 'month').format('MMMM').slice(0,3),
-          dayjs().subtract(3, 'month').format('MMMM').slice(0,3),
-          dayjs().subtract(2, 'month').format('MMMM').slice(0,3),
-          dayjs().subtract(1, 'month').format('MMMM').slice(0,3),
-          dayjs().format('MMMM').slice(0,3),
-        ];
-        barData.datasets[0].data = [150, 50, 320, 250, 180, 10];
-        break;
-      case 5:
-        break;
+
+    const startDay = dayjs().subtract(11, "month");
+    const startMonth = startDay.format('M');
+    if( startMonth !== '1'){
+      barData.labels = [
+        dayjs().subtract(11, "month").format('MMM'),
+        dayjs().subtract(10, "month").format('MMM'),
+        dayjs().subtract(9, "month").format('MMM'),
+        dayjs().subtract(8, "month").format('MMM'),
+        dayjs().subtract(7, "month").format('MMM'),
+        dayjs().subtract(6, "month").format('MMM'),
+        dayjs().subtract(5, "month").format('MMM'),
+        dayjs().subtract(4, "month").format('MMM'),
+        dayjs().subtract(3, "month").format('MMM'),
+        dayjs().subtract(2, "month").format('MMM'),
+        dayjs().subtract(1, "month").format('MMM'),
+        dayjs().format('MMM')
+      ]
     }
+
+      let tempData = [
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0},
+        {amount: 0, total: 0}
+      ];
+      console.log("Temp: " + tempData[0]);
+      console.log("Month: " + startMonth);
+
+      for(let i = 0; i < data.length; i++){
+        console.log("=== NOW TESTING " + dayjs(data[i].date).format('M'));
+        console.log("Comparing to " + (startDay.add(11, "month")).format('M'));
+        if(dayjs(data[i].date).format('M') === startMonth){
+          tempData[0].total += data[i].emissions;
+          tempData[0].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(1, "month").format('M')){
+          tempData[1].total += data[i].emissions;
+          tempData[1].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(2, "month").format('M')){
+          tempData[2].total += data[i].emissions;
+          tempData[2].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(3, "month").format('M')){
+          tempData[3].total += data[i].emissions;
+          tempData[3].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(4, "month").format('M')){
+          tempData[4].total += data[i].emissions;
+          tempData[4].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(5, "month").format('M')){
+          tempData[5].total += data[i].emissions;
+          tempData[5].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(6, "month").format('M')){
+          tempData[6].total += data[i].emissions;
+          tempData[6].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(7, "month").format('M')){
+          tempData[7].total += data[i].emissions;
+          tempData[7].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(8, "month").format('M')){
+          tempData[8].total += data[i].emissions;
+          tempData[8].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(9, "month").format('M')){
+          tempData[9].total += data[i].emissions;
+          tempData[9].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(10, "month").format('M')){
+          tempData[10].total += data[i].emissions;
+          tempData[10].amount++;
+        }
+        else if(dayjs(data[i].date).format('M') === startDay.add(11, "month").format('M')){
+          console.log("JEEEE");
+          tempData[11].total += data[i].emissions;
+          tempData[11].amount++;
+        }
+        else {
+          console.log(`Error: Couldn't fit value to a month: ${typeof(dayjs(data[i].date).format('M'))} ${data[i].date}, ${data[i].emissions}`);
+        }
+      }
+
+    barData.datasets[0].data = [
+      getAverage(tempData[0].total, tempData[0].amount),
+      getAverage(tempData[1].total, tempData[1].amount),
+      getAverage(tempData[2].total, tempData[2].amount),
+      getAverage(tempData[3].total, tempData[3].amount),
+      getAverage(tempData[4].total, tempData[4].amount),
+      getAverage(tempData[5].total, tempData[5].amount),
+      getAverage(tempData[6].total, tempData[6].amount),
+      getAverage(tempData[7].total, tempData[7].amount),
+      getAverage(tempData[8].total, tempData[8].amount),
+      getAverage(tempData[9].total, tempData[9].amount),
+      getAverage(tempData[10].total, tempData[10].amount),
+      getAverage(tempData[11].total, tempData[11].amount),
+    ]
+    console.log(barData);
+    
     return(barData);
   }
 
+/*function formatAverageEmissionsTimePeriodData(data, timeFrame){
+  let finalData = {title: '', emissions: 0, unit: 'g CO2e/km'};
+  for(let i = 0; i<data.length; i++){
+    finalData.emissions += data[i].emissions;
+  }
 
-export default function AverageEmissions({data, chartConfig, timeFrame}){
-    const finalAverageData = formatAverageEmissionsTimePeriodData(data, timeFrame);
-            return(
-            <View>
-                <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Average emissions per trip</Text>
-                <BarChart
-                  style={{
-                    marginVertical: 50,
-                    alignItems: 'center'
-                  }}
-                  data={finalAverageData}
-                  width={Dimensions.get("window").width - 20}
-                  height={220}
-                  yAxisLabel=""
-                  chartConfig={chartConfig}
-                  verticalLabelRotation={0}
-                  withCustomBarColorFromData={true}
-                  fromZero={true}
-                  showBarTops={false}
-                />
-              </View>);
+  if(finalData.emissions >= 1000){
+    finalData.emissions = finalData.emissions / 1000;
+    finalData.unit = 'kg CO2e/km';
+  }
+
+  switch(timeFrame){
+    case 1:
+      finalData.title = "seven days";
+      return finalData;
+    case 2:
+      finalData.title = "30 days";
+      return finalData;
+    case 3:
+      finalData.title = "three months";
+      return finalData;
+    case 4:
+      finalData.title = "six months";
+      return finalData;
+    case 5:
+      finalData.title = "year";
+      return finalData;
+    default:
+      return;
+  }
+}*/
+
+export default function AverageEmissions({data, chartConfig}){
+    const finalAverageData = formatAverageEmissionsTimePeriodData(data);
+    return(
+    <View>
+        <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', margin: 10}}>Average emissions per trip during the past year</Text>
+        <Text style={{textAlign: "left", fontSize: 12, marginLeft: 2, marginBottom: 2, marginTop: 50, color: "black"}}>g CO2e/km</Text>
+        <BarChart
+          style={{
+            marginBottom: 50,
+            marginLeft: -10
+          }}
+          data={finalAverageData}
+          width={Dimensions.get("window").width}
+          height={220}
+          chartConfig={chartConfig}
+          verticalLabelRotation={0}
+          withCustomBarColorFromData={true}
+          fromZero={true}
+          showBarTops={false}
+          showValuesOnTopOfBars={true}
+        />
+      </View>);
 }

@@ -1,4 +1,4 @@
-import DropdownMenu from '../Components/DropDownMenu';
+import DropdownMenu, { graphOptions } from '../Components/DropDownMenu';
 import GraphView from '../Components/GraphView';
 import { StyleSheet, Text, View } from 'react-native';
 import React, {useEffect, useState} from 'react';
@@ -22,6 +22,7 @@ export default function Stats() {
   const [timeFrame, setTimeFrame] = useState(1);
   const endDate = dayjs().format();
   const [startDate, setStartDate] = useState(dayjs().subtract(6, 'days').format());
+  const [showTimePicker, setShowTimePicker] = useState(true);
 
   useEffect(() => {
     console.log("Getting data between " + startDate + " and " + endDate);
@@ -47,6 +48,14 @@ export default function Stats() {
 
   useEffect(() => {
     setTimeFrame(1);
+    switch(choice){
+      case graphOptions[5].key:
+      case graphOptions[6].key:
+        setShowTimePicker(false);
+        break;
+      default:
+        setShowTimePicker(true);
+    }
   }, [choice]);
 
   useEffect(() => {
@@ -76,7 +85,7 @@ export default function Stats() {
               <DropdownMenu choice={setChoice}/>
           </View>
           <GraphView choice={choice} timeFrame={timeFrame}/>
-          <TimeFramePicker choice={(x) => setTimeFrame(x)} chosen={timeFrame} />
+          {showTimePicker === true ? <TimeFramePicker choice={(x) => setTimeFrame(x)} chosen={timeFrame} /> : null}
       </View>
     </View>
   )
