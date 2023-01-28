@@ -19,12 +19,12 @@ const db = SQLite.openDatabase(
 
 export default function Result({ route, navigation }) {
 
-  const { emission } = useSelector(state => state.tripReducer);
+  const { emission, base_vehicle, base_vehicle_type, base_fuel } = useSelector(state => state.tripReducer);
   const dispatch = useDispatch();
 
   const [Id, setID] = useState('');
 
-  let total_emission;
+  let total_emission, base_emission;
 
   useEffect(() => {
     dispatch(getEmission());
@@ -107,11 +107,17 @@ export default function Result({ route, navigation }) {
     }
   };
 
-  const calculate = (base_emission) => {
-    const distance = route.params.distance, avg_emission = base_emission, passengers = 1;
+  const calculate = (a_emission) => {
+    const distance = route.params.distance, avg_emission = a_emission, passengers = 1;
     total_emission = (distance * avg_emission)/passengers;
     return (total_emission);
   };
+
+  const calculate_base = (b_emission) => {
+    const distance = route.params.distance, avg_emission = b_emission, passengers = 1;
+    base_emission = (distance * avg_emission)/passengers;
+    return (base_emission);
+  }
 
   return (
     <View style={styles.body}>
@@ -129,6 +135,25 @@ export default function Result({ route, navigation }) {
                 <View>
                   <Text style={styles.result_text}>
                     {calculate(item.emission)} g CO2 -ekv
+                  </Text>
+                </View>
+              : null}
+          </View>
+        )
+      })}
+      <Text>{base_vehicle}, {base_vehicle_type}, {base_fuel}</Text>
+      {emission.map((item, id) => {
+        key={id}
+        //console.log(item, id);
+        return (
+          <View key={id}>
+            { item.vehicle === base_vehicle &&
+              item.vehicle_type === base_vehicle_type &&
+              item.fuel_type === base_fuel
+              ?
+                <View>
+                  <Text style={styles.result_text}>
+                    {calculate_base(item.emission)} g CO2 -ekv
                   </Text>
                 </View>
               : null}

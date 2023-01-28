@@ -1,7 +1,33 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React from 'react';import SQLite from 'react-native-sqlite-storage';
 
-export default function Settings() {
+const db = SQLite.openDatabase(
+    {
+        name: 'MainDB',
+        location: 'default',
+    },
+    () => {},
+    error => {console.log(error)},
+);
+
+export default function Settings({ navigation }) {
+
+  const onPressHandler = () => {
+    navigation.navigate('Baseline');
+  };
+
+  const onPressDelete = () => {
+    const del = SQLite.deleteDatabase(
+      {name: 'MainDB', location: 'default'},  
+      () => { console.log('db deleted');  },
+      error => {
+          console.log("ERROR: " + error); 
+      }
+      );
+  };
+
+  
+
   return (
     <View style={styles.body}>
       <View style={styles.page_view}>
@@ -12,6 +38,7 @@ export default function Settings() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
+          onPress={onPressHandler}
         >
           <Text style={styles.text}>Baseline</Text>
         </TouchableOpacity>
@@ -32,6 +59,7 @@ export default function Settings() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
+          onPress={onPressDelete}
         >
           <Text style={[styles.text, {color: '#f22'}]}>Reset all data</Text>
         </TouchableOpacity>

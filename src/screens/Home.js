@@ -1,14 +1,24 @@
 import { Button, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import CustomButton from '../utils/CustomButton';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { setTripID, setTrips } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SQLite from 'react-native-sqlite-storage';
+
+const db = SQLite.openDatabase(
+  {
+      name: 'MainDB',
+      location: 'default',
+  },
+  () => {},
+  error => {console.log(error)},
+);
 
 export default function Home({ navigation }) {
 
-  const {trips} = useSelector(state => state.tripReducer);
+    /*const {trips} = useSelector(state => state.tripReducer);
     const dispatch = useDispatch(); 
 
     useEffect(() => { 
@@ -24,6 +34,58 @@ export default function Home({ navigation }) {
           }
       })
       .catch(error => console.log(error))
+  };*/
+
+  const [test, setTest] = useState('');
+
+  useEffect(() => {
+    navigation.addListener('focus', ()=> {
+      //getDataTest();
+      getDate();
+    });
+  }, []);
+
+  const getDataTest = () => {
+    try {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "SELECT SUM(Emission) AS TEST FROM Trips",
+          [],
+          (tx, results) => {
+            //console.log(results.rows.item(0).TEST);
+            var len = results.rows.length;
+                  if (len > 0) {
+                      var DB_test = results.rows.item(0).TEST;
+                      setTest(DB_test);
+                  }
+          }
+        );
+      });
+    } catch (error) {
+        console.log(error);
+    }
+  };
+
+  const getDate = () => {
+    try {
+      db.transaction((tx) => {
+        tx.executeSql(
+          //"SELECT strftime('%m','now') AS TEST FROM Trips",
+          "SELECT SUM(Emission) AS TEST FROM Trips WHERE strftime('%m', Date) = strftime('%m','now')",
+          [],
+          (tx, results) => {
+            //console.log(results.rows.item(0).TEST);
+            var len = results.rows.length;
+                  if (len > 0) {
+                      var DB_test = results.rows.item(0).TEST;
+                      setTest(DB_test);
+                  }
+          }
+        );
+      });
+    } catch (error) {
+        console.log(error);
+    }
   };
 
   return (
@@ -37,9 +99,9 @@ export default function Home({ navigation }) {
         <View style={styles.btn_view_row}>
           <TouchableOpacity
             style={styles.button}
-            data = {trips}
+            //data = {trips}
             onPress={() => {
-                dispatch(setTripID(trips.length + 1));
+                //dispatch(setTripID(trips.length + 1));
                 navigation.navigate('Trip');
             }}
           >
@@ -70,7 +132,7 @@ export default function Home({ navigation }) {
       </View>
       <View style={[styles.text_view, {justifyContent: 'flex-start'}]}>
         <Text style={[styles.text, {fontSize: 20}]}>
-            Your emissions this month is: X CO2e
+            Your emissions this month is: {test} CO2e
           </Text>
       </View>
     </View>

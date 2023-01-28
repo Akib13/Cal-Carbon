@@ -15,7 +15,7 @@ const db = SQLite.openDatabase(
   error => {console.log(error)},
 );
 
-export default function Stats() {
+export default function Stats({ navigation }) {
 
   const [emission, setEmission] = useState('');
   const [choice, setChoice] = useState('pie');
