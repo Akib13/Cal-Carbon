@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // import RNFS from 'react-native-fs';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import SQLite from 'react-native-sqlite-storage';
+import dayjs from 'dayjs';
 
 const db = SQLite.openDatabase(
     {
@@ -186,6 +187,8 @@ export default function Trip({ navigation }) {
                     navigation.goBack();
                 })
                 .catch(error => console.log(error))*/
+                console.log("-----SETTING TRIP-------");
+                console.log("Date: " + date);
 
                 await db.transaction( async (tx) => {
                     await tx.executeSql(
@@ -423,7 +426,7 @@ export default function Trip({ navigation }) {
                 car: car,
                 fuel: fuel,
                 distance: distance
-            })}} />
+            });}} />
     </View>
     </ScrollView>
   )
