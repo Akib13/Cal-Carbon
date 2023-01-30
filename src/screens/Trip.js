@@ -6,12 +6,15 @@ import DatePicker from 'react-native-date-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import CheckBox from '@react-native-community/checkbox';
 import { ScrollView } from 'react-native-gesture-handler';
-import { setTrips, getEmission } from '../redux/actions';
+import { setTrips, getEmission, getFuels, getElectricity } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 // import RNFS from 'react-native-fs';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import SQLite from 'react-native-sqlite-storage';
 import dayjs from 'dayjs';
+import { CalculateTripEmissions } from '../utils/CalculateTripEmissions';
+import { fuelTypes, carTypes, units, methods } from '../utils/Enums';
+import { getElectricityDataAsync, getFuelDataAsync, getMethodDataAsync } from '../utils/APICalls';
 
 const db = SQLite.openDatabase(
     {
@@ -22,27 +25,26 @@ const db = SQLite.openDatabase(
     error => {console.log(error)},
 );
 
-/*const del = SQLite.deleteDatabase(
-    {name: 'MainDB', location: 'default'},  
-    () => { console.log('db deleted');  },
-    error => {
-        console.log("ERROR: " + error); 
-    }
-);*/
+
 
 export default function Trip({ navigation }) {
 
-    const { emission, trips, tripID } = useSelector(state => state.tripReducer);
+    const { emission, trips, tripID, fuels, electricity } = useSelector(state => state.tripReducer);
     const dispatch = useDispatch();
 
     const [vehicle, setVehicle] = useState("");
     const [car, setCar] = useState("");
     const [fuel, setFuel] = useState("");
+    const [fuelType, setFuelType] = useState("");
+    const [consumption, setConsumption] = useState("");
+    const [passengers, setPassengers] = useState(1);
     const [date, setDate] = useState(new Date());
     const [open, setOpen] = useState(false);
     const [favorites, setFavorites] = useState(false);
-    const [distance, setDistance] = useState('');
+    const [distance, setDistance] = useState(0);
     const [iname, setIName] = useState("");
+    const [fuelList, setFuelList] = useState(null);
+    const [tripEmissions, setTripEmissions] = useState(0);
 
     const [test, setTest] = useState(""+date.toISOString().split('T')[0]);
     
@@ -50,36 +52,30 @@ export default function Trip({ navigation }) {
     let total_emission;
   
     const data = [
-        {key:'1', value:'Car'},
-        {key:'2', value:'Bus'},
-        {key:'3', value:'Train'},
-        {key:'4', value:'Plane'},
-        {key:'5', value:'Walk', disabled:true},
-        {key:'6', value:'Bike'},
-        {key:'7', value:'Motorbike'},
-        {key:'8', value:'Moped'},
-        {key:'9', value:'Other'},
+        {key:'1', value: methods[1]},
+        {key:'2', value: methods[2]},
+        {key:'3', value: methods[3]},
+        {key:'4', value: methods[4]},
+        {key:'5', value: methods[5]},
+        {key:'6', value: methods[6]},
+        {key:'7', value: methods[7]},
+        {key:'8', value: methods[8]},
+        {key:'9', value: methods[9]},
+        {key:'10', value: methods[10]},
     ];
 
-    const data_1 = [
-        {key:'1', value:'Small car'},
-        {key:'2', value:'Medium car'},
-        {key:'3', value:'Large car'},
-        {key:'4', value:'Luxury car'},
-        {key:'5', value:'Sports car'},
-        {key:'6', value:'Pickup truck'},
-        {key:'7', value:'Unknown'},
+    const carTypeData = [
+        {key:'1', value: carTypes[1]},
+        {key:'2', value: carTypes[2]},
+        {key:'3', value: carTypes[3]},
+        {key:'4', value: carTypes[4]},
+        {key:'5', value: carTypes[5]},
     ];
 
-    const data_bus = [
-        {key:'1', value:'City bus'},
-        {key:'2', value:'Long Distance'}
-    ];
-
-    const data_2 = [
-        {key:'1', value:'Petrol'},
-        {key:'2', value:'Electricity'},
-        {key:'3', value:'Other'},
+    const fuelTypeData = [
+        {key:'1', value: fuelTypes[1]},
+        {key:'2', value: fuelTypes[2]},
+        {key:'3', value: fuelTypes[3]},
     ];
 
     
@@ -91,6 +87,55 @@ export default function Trip({ navigation }) {
         {name: 'Other'},
     ];
 
+    useEffect(() => {
+        let temp = [];
+        switch(fuelType){
+            case fuelTypes[1]:
+                temp = fuels.filter(val => val.unit == 3);
+                break;
+            case fuelTypes[2]:
+                temp = fuels.filter(val => val.unit === 4);
+                break;
+            case fuelTypes[3]:
+                temp = electricity;
+                break;
+            default:
+                break;
+        }
+        let newFuelList = [];
+        for(let i = 0; i<temp.length; i++){
+            newFuelList.push(temp[i].fuel);
+        }
+        setFuelList(newFuelList);
+    }, [fuelType]);
+
+    useEffect(() => {
+        let avgConsumption;
+        if(vehicle === "Car" && car.length !== 0 && fuelType !== 0){
+            console.log("arvot", vehicle, car, fuelType)
+            let desiredUnit = 0
+            switch(fuelType){
+                case fuelTypes[1]:
+                    desiredUnit = 5;
+                    break;
+                case fuelTypes[2]:
+                    desiredUnit = 6;
+                    break;
+                case fuelTypes[3]:
+                    desiredUnit = 7;
+                    break;
+            }
+            console.log(car, desiredUnit);
+            avgConsumption = emission.filter(x => x.method === car && x.unit === desiredUnit); 
+            console.log(avgConsumption);
+        } else {
+            console.log("vehicle", vehicle);
+            avgConsumption = emission.filter(x => x.method === vehicle); 
+            console.log(avgConsumption);
+        }
+        setConsumption(avgConsumption.length !== 0 ? avgConsumption[0].fuelConsumption : 0);
+        //console.log("Consumption set", avgConsumption[0].fuelConsumption);
+    }, [vehicle, car, fuelType])
     
 
     useEffect(() => {
@@ -99,6 +144,8 @@ export default function Trip({ navigation }) {
         });*/
         dispatch(getEmission());
         createTable();
+        dispatch(getFuels());
+        dispatch(getElectricity());
         //date_converter();
         //getTrip();
     }, []);
@@ -193,7 +240,7 @@ export default function Trip({ navigation }) {
                 await db.transaction( async (tx) => {
                     await tx.executeSql(
                         "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel, Distance, Date, Category, Emission) VALUES (?,?,?,?,?,?,?)",
-                        [vehicle, car, fuel, distance, test, iname, total_emission]
+                        [vehicle, car, fuel, distance, test, iname, calculate()]
                     );
                 })
                 //navigation.navigate("Map");
@@ -215,10 +262,48 @@ export default function Trip({ navigation }) {
         console.log(date_format_str.substring(0,10));
     }*/
 
-    const calculate = (a_emission) => {
-        const avg_emission = a_emission, passengers = 1;
-        total_emission = (distance * avg_emission)/passengers;
-        return (total_emission);
+    const calculate = () => {
+        let methodToFind = "";
+        console.log("CALCULATING", fuel);
+        if(vehicle === "Car"){
+            methodToFind = car;
+        }
+        else {
+            methodToFind = vehicle;
+        }
+
+        let desiredUnit = 0;
+        let desiredFuel = "";
+        switch(fuelType){
+            case fuelTypes[1]:
+                desiredUnit = 5;
+                desiredFuel = fuels.filter(x => x.fuel === fuel);
+                break;
+            case fuelTypes[2]:
+                desiredUnit = 6;
+                console.log(fuels);
+                desiredFuel = fuels.filter(x => x.fuel === fuel);
+                console.log(desiredFuel);
+                break;
+            case fuelTypes[3]:
+                desiredUnit = 7;
+                desiredFuel = electricity.filter(x => x.fuel === fuel);
+                break;
+            default:
+                desiredUnit = 0;
+        }
+
+        console.log(methodToFind, desiredUnit);
+        const desired = emission.filter(x => x.method === methodToFind && x.unit === desiredUnit);
+        console.log(desired[0]);
+        if(desired.length === 0){
+            //setTripEmissions(0);
+            return 0;
+        }
+
+        let value = CalculateTripEmissions(methodToFind, desired[0].emissions, parseFloat(distance), parseInt(passengers), parseFloat(consumption), desiredFuel.length === 0 ? 0 : desiredFuel[0].emissions);
+        //setTripEmissions(value);
+        return value;
       };
 
 
@@ -229,7 +314,11 @@ export default function Trip({ navigation }) {
         <Text>Transportation method</Text>
         <SelectList
             boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
-            setSelected={(val) => setVehicle(val)} 
+            setSelected={(val) => {
+                setVehicle(val);
+                setFuelType(0);
+                setFuel("");
+            }} 
             data={data} 
             save="value"
         />
@@ -239,101 +328,54 @@ export default function Trip({ navigation }) {
                 <SelectList
                     boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
                     setSelected={(val) => setCar(val)} 
-                    data={data_1} 
+                    data={carTypeData} 
                     save="value"
                 />
-                <Text>Type of fuel</Text>
-                <SelectList
-                    boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
-                    setSelected={(val) => setFuel(val)} 
-                    data={data_2} 
-                    save="value"
-                />
-                <Text>Number of Passengers</Text>
-                <TextInput
-                    style={styles.input}
-                />
-            </View>
-            : 
-            null
-        }
-        {vehicle === 'Bus' ? 
-            <View>
-                <Text>Type of Bus</Text>
-                <SelectList
-                    boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
-                    setSelected={(val) => setCar(val)} 
-                    data={data_bus} 
-                    save="value"
-                />
-                <Text>Type of fuel</Text>
-                <SelectList
-                    boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
-                    setSelected={(val) => setFuel(val)} 
-                    data={data_2} 
-                    save="value"
-                />
-                <Text>Number of Passengers</Text>
-                <TextInput
-                    style={styles.input}
-                />
-            </View>
-            : 
-            null
-        }
-        {vehicle === 'Motorbike' ? 
+            </View> : null}
+        {vehicle !== methods[1] && vehicle !== methods[2] && vehicle !== methods[8] && vehicle !== methods[9] && vehicle !== methods[10]? 
             <View>
                 <Text>Type of fuel</Text>
                 <SelectList
                     boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
-                    setSelected={(val) => setFuel(val)} 
-                    data={data_2} 
+                    setSelected={(val) => {
+                        setFuelType(val);
+                        setFuel("");
+                    }} 
+                    data={fuelTypeData} 
                     save="value"
+                />
+                <Text>{fuelType === fuelTypes[3] ? "Fuel for generating electricity" : "Fuel"}</Text>
+                <SelectList
+                    boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
+                    setSelected={(val) => setFuel(val)} 
+                    data={fuelList} 
+                    save="value"
+                />
+                <Text>{`Consumption (${fuelType === fuelTypes[1] ? units[5] : fuelType === fuelTypes[2] ? units[6] : units[7]})`}</Text>
+                <TextInput
+                    style={styles.input}
+                    onChangeText={(val) => setConsumption(val)}
+                    defaultValue={consumption.toString()}
+                    keyboardType="decimal-pad"
+                    inputMode="decimal"
                 />
                 <Text>Number of Passengers</Text>
                 <TextInput
                     style={styles.input}
+                    onChangeText={(val) => setPassengers(val.replace(/[^0-9]/g, ''))}
+                    value={passengers}
+                    keyboardType="decimal-pad"
                 />
             </View>
-            : 
-            null
+        : 
+        null
         }
-        <Text>Departure address</Text>
-        <View style={styles.date_view}>
-            <TextInput style={{ width: '90%'}} />
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('Map');
-              }}
-            >
-              <FontAwesome5 
-                  name={'map-marked-alt'}
-                  size={28}
-                  color={'#000'}
-              />
-            </TouchableOpacity>
-        </View>
-        
-        <Text>Arrival address</Text>
-        <View style={styles.date_view}>
-            <TextInput style={{ width: '90%'}} />
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('Map');
-              }}
-            >
-              <FontAwesome5 
-                  name={'map-marked-alt'}
-                  size={28}
-                  color={'#000'}
-              />
-            </TouchableOpacity>
-        </View>
-        <Text>Total distance</Text>
+        <Text>{"Total distance (km)"}</Text>
         <TextInput
             style={styles.input}
             value={distance}
             onChangeText={(value) => setDistance(value)}
+            keyboardType="decimal-pad"
         />
         <Text>Date of trip</Text>
         <View style={styles.date_view}>
@@ -401,31 +443,20 @@ export default function Trip({ navigation }) {
             :null
             }
         </View>
-        {emission.map((item, id) => {
-            key={id}
-            //console.log(item, id);
-            return (
-            <View key={id}>
-                { item.vehicle === vehicle &&
-                item.vehicle_type === car &&
-                item.fuel_type === fuel
-                ?
-                    <View>
-                    <Text style={styles.result_text}>
-                        {calculate(item.emission)} g CO2 -ekv
-                    </Text>
-                    </View>
-                : null}
-            </View>
-            )
-        })}
-        <Button title='Save' onPress={setTrip} />
-        <Button title='Calculate Emission' onPress={() => { navigation.navigate('Result',
+        <View>
+            <Text style={styles.result_text}>
+                {vehicle.length !== 0 ? calculate(vehicle, car) : 0} g CO2 -ekv
+            </Text>
+        </View>
+        <Button title='Save' onPress={() => { 
+            setTrip();
+            navigation.navigate('Result',
             { 
                 vehicle: vehicle,
                 car: car,
                 fuel: fuel,
-                distance: distance
+                distance: distance,
+                total_emission: calculate(vehicle, car)
             });}} />
     </View>
     </ScrollView>
@@ -463,5 +494,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#000000',
     },
+    result_text: {
+        fontSize: 20
+    }
 
 });

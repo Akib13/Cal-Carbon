@@ -1,13 +1,7 @@
 import { View } from "react-native"
 import TextButton from "../Components/TextButton";
+import { timeFrameEnum } from "./Enums";
 
-export const timeFrameEnum = {
-    1: "1 week",
-    2: "1 month",
-    3: "3 months",
-    4: "6 months",
-    5: "1 year"
-}
 
 export default function TimeFramePicker({choice, chosen}) {
 

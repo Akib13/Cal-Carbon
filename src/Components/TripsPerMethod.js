@@ -1,65 +1,88 @@
 import { View, Text } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import { timeFrameEnum } from "../utils/Enums";
+import { methods } from "../utils/Enums";
 
 function formatTripsPerMethodData(data) {
     let finalData = [
       {
-        name: "Bike",
+        name: methods[1],
         trips: 0,
         color: "#0562f7",
         legendFontColor: "#7F7F7F",
         legendFontSize: 15
       },
       {
-        name: "Car",
+        name: methods[2],
         trips: 0,
         color: "#f70d05",
         legendFontColor: "#7F7F7F",
         legendFontSize: 15
       },
       {
-        name: "Bus",
+        name: methods[3],
         trips: 0,
         color: "#05f73e",
         legendFontColor: "#7F7F7F",
         legendFontSize: 15
       },
       {
-        name: "Train",
+        name: methods[4],
         trips: 0,
         color: "#f7f705",
         legendFontColor: "#7F7F7F",
         legendFontSize: 15
       },
       {
-        name: "Airplane",
+        name: methods[5],
         trips: 0,
         color: "#b705f7",
         legendFontColor: "#7F7F7F",
         legendFontSize: 15
       },
       {
-        name: "Moped",
+        name: methods[6],
         trips: 0,
         color: "#f78e05",
         legendFontColor: "#7F7F7F",
         legendFontSize: 15
       },
       {
-        name: "Motorbike",
+        name: methods[7],
         trips: 0,
         color: "#f705f3",
         legendFontColor: "#7F7F7F",
         legendFontSize: 15
       },
       {
-        name: "E-Scooter",
+        name: methods[8],
         trips: 0,
         color: "#2d05f7",
         legendFontColor: "#7F7F7F",
         legendFontSize: 15
-      }
+      },
+      {
+        name: methods[9],
+        trips: 0,
+        color: "#f7f705",
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 15
+      },
+      {
+        name: methods[10],
+        trips: 0,
+        color: "#b705f7",
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 15
+      },
+      {
+        name: methods[11],
+        trips: 0,
+        color: "#f78e05",
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 15
+      },
     ];
   
     const length = data.length;
@@ -67,38 +90,48 @@ function formatTripsPerMethodData(data) {
     for (let i = 0; i < length; i++){
       let row = data[i];
   
-      switch(row.vehicle_type){
-        case 'electricbike':
+      switch(row.Vehicle){
+        case methods[1]:
           console.log(finalData[0]);
-          finalData[0].trips += row.trips;
+          finalData[0].trips++;
           break;
-        case 'car':
-          finalData[1].trips += row.trips;
+        case methods[2]:
+          finalData[1].trips++;
           break;
-        case 'bus':
-          finalData[2].trips += row.trips;
+        case methods[3]:
+          finalData[2].trips++;
           break;
-        case 'train':
-          finalData[3].trips += row.trips;
+        case methods[4]:
+          finalData[3].trips++;
           break;
-        case 'plane':
-          finalData[4].trips += row.trips;
+        case methods[5]:
+          finalData[4].trips++;
           break;
-        case 'moped':
-          finalData[5].trips += row.trips;
+        case methods[6]:
+          finalData[5].trips++;
           break;
-        case 'motorbike':
-          finalData[6].trips += row.trips;
+        case methods[7]:
+          finalData[6].trips++;
           break;
-        case 'escooter':
-          finalData[7].trips += row.trips;
+        case methods[8]:
+          finalData[7].trips++;
+          break;
+        case methods[9]:
+          finalData[8].trips++;
+          break;
+        case methods[10]:
+          finalData[7].trips++;
+          break;
+        case methods[11]:
+          finalData[7].trips++;
           break;
         default:
           break;
       }
     }
   
-    return(finalData);
+    const cleaned = finalData.filter(x => x.trips !== 0);
+    return(cleaned);
   }
 
   const perMethodData = [
@@ -139,17 +172,17 @@ function formatTripsPerMethodData(data) {
     }
   ];
 
-export default function TripsPerMethod({data, chartConfig}){
+export default function TripsPerMethod({data, chartConfig, timeFrame}){
     let finaldata = [{}];
     finaldata = formatTripsPerMethodData(data);
     return (
         <View>
-          <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Trips per transportation method</Text>
-          <PieChart
+          <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Trips per transportation method during the past {timeFrameEnum[timeFrame]}</Text>
+          {finaldata.length !== 0 ? <PieChart
           style={{
               marginTop: 50
             }}
-            data={perMethodData}
+            data={finaldata}
             width={Dimensions.get("window").width}
             height={200}
             chartConfig={chartConfig}
@@ -157,6 +190,6 @@ export default function TripsPerMethod({data, chartConfig}){
             backgroundColor={"transparent"}
             paddingLeft={"15"}
             absolute={true}>    
-          </PieChart>
+          </PieChart> : <View height="250"><Text>No data available</Text></View>}
         </View>);
 }

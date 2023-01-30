@@ -1,7 +1,6 @@
 import { View, Text, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import dayjs from "dayjs";
-import isoWeek from "dayjs/plugin/isoWeek";
 
 function formatTripsTimePeriodData(data, timeFrame){
     let barData = {
