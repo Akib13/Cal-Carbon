@@ -7,31 +7,31 @@ export function getWeekKms(days, data){
   let tempData = [0, 0, 0, 0, 0, 0, 0];
 
   for(let i = 0; i<data.length; i++){
-    console.log(data[i].date);
-    console.log(days[0]);
-    if(data[i].date === days[0].format("YYYY-MM-DD")){
-      tempData[0] += data[i].distance;
+    console.log(data.length);
+    console.log(data[i].Distance);
+    if(data[i].Date === days[0].format("YYYY-MM-DD")){
+      tempData[0] = tempData[0] + data[i].Distance;
     }
-    else if(data[i].date === days[1].format("YYYY-MM-DD")){
-      tempData[1] += data[i].distance;
+    else if(data[i].Date === days[1].format("YYYY-MM-DD")){
+      tempData[1] = tempData[1] + data[i].Distance;
     }
-    else if(data[i].date === days[2].format("YYYY-MM-DD")){
-      tempData[2] += data[i].distance;
+    else if(data[i].Date === days[2].format("YYYY-MM-DD")){
+      tempData[2] = tempData[2] + data[i].Distance;
     }
-    else if(data[i].date === days[3].format("YYYY-MM-DD")){
-      tempData[3] += data[i].distance;
+    else if(data[i].Date === days[3].format("YYYY-MM-DD")){
+      tempData[3] = tempData[3] + data[i].Distance;
     }
-    else if(data[i].date === days[4].format("YYYY-MM-DD")){
-      tempData[4] += data[i].distance;
+    else if(data[i].Date === days[4].format("YYYY-MM-DD")){
+      tempData[4] = tempData[4] + data[i].Distance;
     }
-    else if(data[i].date === days[5].format("YYYY-MM-DD")){
-      tempData[5] += data[i].distance;
+    else if(data[i].Date === days[5].format("YYYY-MM-DD")){
+      tempData[5] = tempData[5] + data[i].Distance;
     }
-    else if(data[i].date === days[6].format("YYYY-MM-DD")){
-      tempData[6] += data[i].distance;
+    else if(data[i].Date === days[6].format("YYYY-MM-DD")){
+      tempData[6] = tempData[6] + data[i].Distance;
     }
     else {
-      console.log(`Error: Couldn't fit data to any day of the week. Date: ${data[i].date}, method: ${data[i].vehicle_type}, distance: ${data[i].distance}`)
+      console.log(`Error: Couldn't fit data to any day of the week. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, Distance: ${data[i].Distance}`)
     }
   }
   return(tempData);
@@ -41,23 +41,23 @@ export function getMonthKms(weeks, data){
   let tempData = [0, 0, 0, 0];
 
   for(let i = 0; i < data.length; i++){
-    let week = dayjs(data[i].date).isoWeek();
+    let week = dayjs(data[i].Date).isoWeek();
     console.log(week);
     console.log(weeks[0]);
     if(week === weeks[0]){
-      tempData[0] += data[i].distance;
+      tempData[0] = tempData[0] + data[i].Distance;
     }
     else if(week === weeks[1]){
-      tempData[1] += data[i].distance;
+      tempData[1] = tempData[1] + data[i].Distance;
     }
     else if(week === weeks[2]){
-      tempData[2] += data[i].distance;
+      tempData[2] = tempData[2] + data[i].Distance;
     }
     else if(week === weeks[3]){
-      tempData[3] += data[i].distance;
+      tempData[3] = tempData[3] + data[i].Distance;
     }
     else {
-      console.log(`Error: Couldn't fit data to any day of the week. Date: ${data[i].date}, method: ${data[i].vehicle_type}, distance: ${data[i].distance}`)
+      console.log(`Error: Couldn't fit data to any day of the week. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, Distance: ${data[i].Distance}`)
     }
   }
   return(tempData);
@@ -67,19 +67,19 @@ export function getThreeMonthsKms(months, data){
   let tempData = [0, 0, 0];
 
   for(let i = 0; i < data.length; i++){
-    const month = dayjs(data[i].date).month();
+    const month = dayjs(data[i].Date).month();
 
     if(month === months[0]){
-      tempData[0] += data[i].distance;
+      tempData[0] = tempData[0] + data[i].Distance;
     }
     else if(month === months[1]){
-      tempData[1] += data[i].distance;
+      tempData[1] = tempData[1] + data[i].Distance;
     }
     else if(month === months[2]){
-      tempData[2] += data[i].distance;
+      tempData[2] = tempData[2] + data[i].Distance;
     }
     else {
-      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].date}, method: ${data[i].vehicle_type}, distance: ${data[i].distance}`)
+      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, Distance: ${data[i].Distance}`)
     }
   }
   return tempData;
@@ -89,28 +89,28 @@ export function getSixMonthsKms(months, data){
   let tempData = [0, 0, 0, 0, 0, 0];
 
   for(let i = 0; i < data.length; i++){
-    const month = dayjs(data[i].date).month();
+    const month = dayjs(data[i].Date).month();
 
     if(month === months[0]){
-      tempData[0] += data[i].distance;
+      tempData[0] = tempData[0] + data[i].Distance;
     }
     else if(month === months[1]){
-      tempData[1] += data[i].distance;
+      tempData[1] = tempData[1] + data[i].Distance;
     }
     else if(month === months[2]){
-      tempData[2] += data[i].distance;
+      tempData[2] = tempData[2] + data[i].Distance;
     }
     else if(month === months[3]){
-      tempData[3] += data[i].distance;
+      tempData[3] = tempData[3] + data[i].Distance;
     }
     else if(month === months[4]){
-      tempData[4] += data[i].distance;
+      tempData[4] = tempData[4] + data[i].Distance;
     }
     else if(month === months[5]){
-      tempData[5] += data[i].distance;
+      tempData[5] = tempData[5] + data[i].Distance;
     }
     else {
-      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].date}, method: ${data[i].vehicle_type}, distance: ${data[i].distance}`)
+      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, Distance: ${data[i].Distance}`)
     }
   }
   return tempData;
@@ -120,68 +120,52 @@ export function getYearKms(months, data){
   let tempData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   for(let i = 0; i < data.length; i++){
-    const month = dayjs(data[i].date).month();
+    const month = dayjs(data[i].Date).month();
 
     if(month === months[0]){
-      tempData[0] += data[i].distance;
+      tempData[0] = tempData[0] + data[i].Distance;
     }
     else if(month === months[1]){
-      tempData[1] += data[i].distance;
+      tempData[1] = tempData[1] + data[i].Distance;
     }
     else if(month === months[2]){
-      tempData[2] += data[i].distance;
+      tempData[2] = tempData[2] + data[i].Distance;
     }
     else if(month === months[3]){
-      tempData[3] += data[i].distance;
+      tempData[3] = tempData[3] + data[i].Distance;
     }
     else if(month === months[4]){
-      tempData[4] += data[i].distance;
+      tempData[4] = tempData[4] + data[i].Distance;
     }
     else if(month === months[5]){
-      tempData[5] += data[i].distance;
+      tempData[5] = tempData[5] + data[i].Distance;
     }
     else if(month === months[6]){
-      tempData[6] += data[i].distance;
+      tempData[6] = tempData[6] + data[i].Distance;
     }
     else if(month === months[7]){
-      tempData[7] += data[i].distance;
+      tempData[7] = tempData[7] + data[i].Distance;
     }
     else if(month === months[8]){
-      tempData[8] += data[i].distance;
+      tempData[8] = tempData[8] + data[i].Distance;
     }
     else if(month === months[9]){
-      tempData[9] += data[i].distance;
+      tempData[9] = tempData[9] + data[i].Distance;
     }
     else if(month === months[10]){
-      tempData[10] += data[i].distance;
+      tempData[10] = tempData[10] + data[i].Distance;
     }
     else if(month === months[11]){
-      tempData[11] += data[i].distance;
+      tempData[11] = tempData[11] + data[i].Distance;
     }
     else {
-      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].date}, method: ${data[i].vehicle_type}, distance: ${data[i].distance}`)
+      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, Distance: ${data[i].Distance}`)
     }
   }
   return tempData;
 }
 
-function formatEmissionsTimePeriodData(data, timeFrame){
-    let barData = {
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Nov", "Dec"],
-      datasets: [
-        {
-          data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          colors: [
-            (opacity = 1) => '#BE95FF',
-            (opacity = 1) => '#fcba03',
-            (opacity = 1) => '#fc0303',
-            (opacity = 1) => '#035efc',
-            (opacity = 1) => '#c203fc',
-            (opacity = 1) => '#fc03be',
-          ]
-        }
-      ]
-    };
+function formatEmissionsTimePeriodData(data, timeFrame, barData){
   
     switch(timeFrame){
       case 1:
@@ -307,8 +291,26 @@ function formatEmissionsTimePeriodData(data, timeFrame){
   }
 
 
-export default function TotalKilometers({data, chartConfig, timeFrame}){
-    const finalKmData = formatEmissionsTimePeriodData(data, timeFrame);
+export default function TotalKilometers({data, chartConfig, timeFrame, loading}){
+  let finalKmData = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        colors: [
+          (opacity = 1) => '#BE95FF',
+          (opacity = 1) => '#fcba03',
+          (opacity = 1) => '#fc0303',
+          (opacity = 1) => '#035efc',
+          (opacity = 1) => '#c203fc',
+          (opacity = 1) => '#fc03be',
+        ]
+      }
+    ]
+  };
+  if(!loading){
+      finalKmData = formatEmissionsTimePeriodData(data, timeFrame, finalKmData);
+    }
             return(
               <View>
                 <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Total kilometers travelled this year</Text>

@@ -7,6 +7,7 @@ import { getEmission } from '../redux/actions';
 import GlobalStyle from '../utils/GlobalStyle';
 import CheckBox from '@react-native-community/checkbox';
 import SQLite from 'react-native-sqlite-storage';
+import { CalculateTripEmissions } from '../utils/CalculateTripEmissions';
 
 const db = SQLite.openDatabase(
   {
@@ -19,12 +20,12 @@ const db = SQLite.openDatabase(
 
 export default function Result({ route, navigation }) {
 
-  const { emission, base_vehicle, base_vehicle_type, base_fuel } = useSelector(state => state.tripReducer);
+  const { emission, base_vehicle, base_vehicle_type, base_fuel, base_emission, base_fuel_emission, base_consumption, base_passengers } = useSelector(state => state.tripReducer);
   const dispatch = useDispatch();
 
   const [Id, setID] = useState('');
 
-  let total_emission, base_emission;
+  let total_emission;
 
   useEffect(() => {
     dispatch(getEmission());
@@ -89,7 +90,7 @@ export default function Result({ route, navigation }) {
             db.transaction((tx)=> {
                 tx.executeSql(
                     "UPDATE Trips SET Emission=? WHERE ID=?",
-                    [total_emission, Id],
+                    [route.params.total_emission, Id],
                     () => {Alert.alert("Success!", "Your data has been updated.")},
                     error => {console.log(error)}
                 );
@@ -113,53 +114,28 @@ export default function Result({ route, navigation }) {
     return (total_emission);
   };
 
-  const calculate_base = (b_emission) => {
-    const distance = route.params.distance, avg_emission = b_emission, passengers = 1;
-    base_emission = (distance * avg_emission)/passengers;
-    return (base_emission);
+  const calculate_base = () => {
+    //get type of car in case base_vehicle is simply car, use base_vechicle in other cases
+    const baselineMethod = base_vehicle_type.length === 0 ? base_vehicle : base_vehicle_type;
+    return CalculateTripEmissions(baselineMethod, base_emission, route.params.distance, base_passengers, base_consumption, base_fuel_emission);
   }
 
   return (
     <View style={styles.body}>
       <Text style={styles.top_text}>Emissions for your trip</Text>
       <Text style={styles.mid_text}>Total Emissions</Text>
-      {emission.map((item, id) => {
-        key={id}
-        //console.log(item, id);
-        return (
-          <View key={id}>
-            { item.vehicle === route.params.vehicle &&
-              item.vehicle_type === route.params.car &&
-              item.fuel_type === route.params.fuel
-              ?
-                <View>
-                  <Text style={styles.result_text}>
-                    {calculate(item.emission)} g CO2 -ekv
-                  </Text>
-                </View>
-              : null}
-          </View>
-        )
-      })}
+      <View>
+        <Text style={styles.result_text}>
+          {route.params.total_emission} g CO2 -ekv
+        </Text>
+      </View>
       <Text>{base_vehicle}, {base_vehicle_type}, {base_fuel}</Text>
-      {emission.map((item, id) => {
-        key={id}
-        //console.log(item, id);
-        return (
-          <View key={id}>
-            { item.vehicle === base_vehicle &&
-              item.vehicle_type === base_vehicle_type &&
-              item.fuel_type === base_fuel
-              ?
-                <View>
-                  <Text style={styles.result_text}>
-                    {calculate_base(item.emission)} g CO2 -ekv
-                  </Text>
-                </View>
-              : null}
-          </View>
-        )
-      })}
+      <Text style={styles.mid_text}>Baseline Emissions</Text>
+      <View>
+        <Text style={styles.result_text}>
+          {calculate_base()} g CO2 -ekv
+        </Text>
+      </View>
     <Button title='save' onPress={updateData}/>
     <Button title='Done' onPress={() => {navigation.navigate('Map', { 
       emsn: total_emission

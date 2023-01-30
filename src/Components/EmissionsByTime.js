@@ -7,31 +7,30 @@ export function getWeekEmissions(days, data){
   let tempData = [0, 0, 0, 0, 0, 0, 0];
 
   for(let i = 0; i<data.length; i++){
-    console.log(data[i].date);
-    console.log(days[0]);
-    if(data[i].date === days[0].format("YYYY-MM-DD")){
-      tempData[0] += data[i].emissions;
+    console.log(data[i]);
+    if(data[i].Date === days[0].format("YYYY-MM-DD")){
+      tempData[0] += data[i].Emission / 1000;
     }
-    else if(data[i].date === days[1].format("YYYY-MM-DD")){
-      tempData[1] += data[i].emissions;
+    else if(data[i].Date === days[1].format("YYYY-MM-DD")){
+      tempData[1] += data[i].Emission / 1000;
     }
-    else if(data[i].date === days[2].format("YYYY-MM-DD")){
-      tempData[2] += data[i].emissions;
+    else if(data[i].Date === days[2].format("YYYY-MM-DD")){
+      tempData[2] += data[i].Emission / 1000;
     }
-    else if(data[i].date === days[3].format("YYYY-MM-DD")){
-      tempData[3] += data[i].emissions;
+    else if(data[i].Date === days[3].format("YYYY-MM-DD")){
+      tempData[3] += data[i].Emission / 1000;
     }
-    else if(data[i].date === days[4].format("YYYY-MM-DD")){
-      tempData[4] += data[i].emissions;
+    else if(data[i].Date === days[4].format("YYYY-MM-DD")){
+      tempData[4] += data[i].Emission / 1000;
     }
-    else if(data[i].date === days[5].format("YYYY-MM-DD")){
-      tempData[5] += data[i].emissions;
+    else if(data[i].Date === days[5].format("YYYY-MM-DD")){
+      tempData[5] += data[i].Emission / 1000;
     }
-    else if(data[i].date === days[6].format("YYYY-MM-DD")){
-      tempData[6] += data[i].emissions;
+    else if(data[i].Date === days[6].format("YYYY-MM-DD")){
+      tempData[6] += data[i].Emission / 1000;
     }
     else {
-      console.log(`Error: Couldn't fit data to any day of the week. Date: ${data[i].date}, method: ${data[i].vehicle_type}, emissions: ${data[i].emissions}`)
+      console.log(`Error: Couldn't fit data to any day of the week. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, emissions: ${data[i].Emission}`)
     }
   }
   return(tempData);
@@ -41,23 +40,23 @@ export function getMonthEmissions(weeks, data){
   let tempData = [0, 0, 0, 0];
 
   for(let i = 0; i < data.length; i++){
-    let week = dayjs(data[i].date).isoWeek();
+    let week = dayjs(data[i].Date).isoWeek();
     console.log(week);
     console.log(weeks[0]);
     if(week === weeks[0]){
-      tempData[0] += data[i].emissions;
+      tempData[0] += data[i].Emission / 1000;
     }
     else if(week === weeks[1]){
-      tempData[1] += data[i].emissions;
+      tempData[1] += data[i].Emission / 1000;
     }
     else if(week === weeks[2]){
-      tempData[2] += data[i].emissions;
+      tempData[2] += data[i].Emission / 1000;
     }
     else if(week === weeks[3]){
-      tempData[3] += data[i].emissions;
+      tempData[3] += data[i].Emission / 1000;
     }
     else {
-      console.log(`Error: Couldn't fit data to any day of the week. Date: ${data[i].date}, method: ${data[i].vehicle_type}, emissions: ${data[i].emissions}`)
+      console.log(`Error: Couldn't fit data to any day of the week. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, emissions: ${data[i].Emission}`)
     }
   }
   return(tempData);
@@ -67,19 +66,19 @@ export function getThreeMonthsEmissions(months, data){
   let tempData = [0, 0, 0];
 
   for(let i = 0; i < data.length; i++){
-    const month = dayjs(data[i].date).month();
+    const month = dayjs(data[i].Date).month();
 
     if(month === months[0]){
-      tempData[0] += data[i].emissions;
+      tempData[0] += data[i].Emission / 1000;
     }
     else if(month === months[1]){
-      tempData[1] += data[i].emissions;
+      tempData[1] += data[i].Emission / 1000;
     }
     else if(month === months[2]){
-      tempData[2] += data[i].emissions;
+      tempData[2] += data[i].Emission / 1000;
     }
     else {
-      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].date}, method: ${data[i].vehicle_type}, emissions: ${data[i].emissions}`)
+      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, emissions: ${data[i].Emission}`)
     }
   }
   return tempData;
@@ -89,28 +88,28 @@ export function getSixMonthsEmissions(months, data){
   let tempData = [0, 0, 0, 0, 0, 0];
 
   for(let i = 0; i < data.length; i++){
-    const month = dayjs(data[i].date).month();
+    const month = dayjs(data[i].Date).month();
 
     if(month === months[0]){
-      tempData[0] += data[i].emissions;
+      tempData[0] += data[i].Emission / 1000;
     }
     else if(month === months[1]){
-      tempData[1] += data[i].emissions;
+      tempData[1] += data[i].Emission / 1000;
     }
     else if(month === months[2]){
-      tempData[2] += data[i].emissions;
+      tempData[2] += data[i].Emission / 1000;
     }
     else if(month === months[3]){
-      tempData[3] += data[i].emissions;
+      tempData[3] += data[i].Emission / 1000;
     }
     else if(month === months[4]){
-      tempData[4] += data[i].emissions;
+      tempData[4] += data[i].Emission / 1000;
     }
     else if(month === months[5]){
-      tempData[5] += data[i].emissions;
+      tempData[5] += data[i].Emission / 1000;
     }
     else {
-      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].date}, method: ${data[i].vehicle_type}, emissions: ${data[i].emissions}`)
+      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, emissions: ${data[i].Emission}`)
     }
   }
   return tempData;
@@ -120,46 +119,46 @@ export function getYearEmissions(months, data){
   let tempData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   for(let i = 0; i < data.length; i++){
-    const month = dayjs(data[i].date).month();
+    const month = dayjs(data[i].Date).month();
 
     if(month === months[0]){
-      tempData[0] += data[i].emissions;
+      tempData[0] += data[i].Emission / 1000;
     }
     else if(month === months[1]){
-      tempData[1] += data[i].emissions;
+      tempData[1] += data[i].Emission / 1000;
     }
     else if(month === months[2]){
-      tempData[2] += data[i].emissions;
+      tempData[2] += data[i].Emission / 1000;
     }
     else if(month === months[3]){
-      tempData[3] += data[i].emissions;
+      tempData[3] += data[i].Emission / 1000;
     }
     else if(month === months[4]){
-      tempData[4] += data[i].emissions;
+      tempData[4] += data[i].Emission / 1000;
     }
     else if(month === months[5]){
-      tempData[5] += data[i].emissions;
+      tempData[5] += data[i].Emission / 1000;
     }
     else if(month === months[6]){
-      tempData[6] += data[i].emissions;
+      tempData[6] += data[i].Emission / 1000;
     }
     else if(month === months[7]){
-      tempData[7] += data[i].emissions;
+      tempData[7] += data[i].Emission / 1000;
     }
     else if(month === months[8]){
-      tempData[8] += data[i].emissions;
+      tempData[8] += data[i].Emission / 1000;
     }
     else if(month === months[9]){
-      tempData[9] += data[i].emissions;
+      tempData[9] += data[i].Emission / 1000;
     }
     else if(month === months[10]){
-      tempData[10] += data[i].emissions;
+      tempData[10] += data[i].Emission / 1000;
     }
     else if(month === months[11]){
-      tempData[11] += data[i].emissions;
+      tempData[11] += data[i].Emission / 1000;
     }
     else {
-      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].date}, method: ${data[i].vehicle_type}, emissions: ${data[i].emissions}`)
+      console.log(`Error: Couldn't fit data to any month. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, emissions: ${data[i].Emission}`)
     }
   }
   return tempData;
@@ -308,13 +307,13 @@ function formatEmissionsTimePeriodData(data, timeFrame){
   }
   
 
-export default function EmissionsByTime({data, chartConfig, timeFrame}){
+export default function EmissionsByTime({data, chartConfig, timeFrame, loading}){
     const finalData = formatEmissionsTimePeriodData(data, timeFrame);
           return(
             <View>
               <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Total emissions this year</Text>
-              <Text style={{textAlign: "left", fontSize: 12, marginLeft: 2, marginBottom: 2, marginTop: 50, color: "black"}}>g CO2e</Text>
-              <BarChart
+              <Text style={{textAlign: "left", fontSize: 12, marginLeft: 2, marginBottom: 2, marginTop: 50, color: "black"}}>kg CO2e</Text>
+              {loading === true ? <View style={{height: 220}}></View> : <BarChart
                 style={{
                   alignItems: 'center'
                 }}
@@ -326,6 +325,6 @@ export default function EmissionsByTime({data, chartConfig, timeFrame}){
                 withCustomBarColorFromData={true}
                 fromZero={true}
                 flatColor={true}
-              />
+              />}
             </View>);
 }

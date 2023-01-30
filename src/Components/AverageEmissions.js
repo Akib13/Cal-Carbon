@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 
 function getAverage(total, amount){
   if(amount !== 0){
-    return (total / amount).toFixed(1);
+    return (total / amount / 1000).toFixed(1);
   }
   else {
     return 0;
@@ -72,59 +72,59 @@ function formatAverageEmissionsTimePeriodData(data){
       console.log("Month: " + startMonth);
 
       for(let i = 0; i < data.length; i++){
-        console.log("=== NOW TESTING " + dayjs(data[i].date).format('M'));
+        console.log("=== NOW TESTING " + dayjs(data[i].Date).format('M'));
         console.log("Comparing to " + (startDay.add(11, "month")).format('M'));
-        if(dayjs(data[i].date).format('M') === startMonth){
-          tempData[0].total += data[i].emissions;
+        if(dayjs(data[i].Date).format('M') === startMonth){
+          tempData[0].total += data[i].Emission;
           tempData[0].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(1, "month").format('M')){
-          tempData[1].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(1, "month").format('M')){
+          tempData[1].total += data[i].Emission;
           tempData[1].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(2, "month").format('M')){
-          tempData[2].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(2, "month").format('M')){
+          tempData[2].total += data[i].Emission;
           tempData[2].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(3, "month").format('M')){
-          tempData[3].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(3, "month").format('M')){
+          tempData[3].total += data[i].Emission;
           tempData[3].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(4, "month").format('M')){
-          tempData[4].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(4, "month").format('M')){
+          tempData[4].total += data[i].Emission;
           tempData[4].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(5, "month").format('M')){
-          tempData[5].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(5, "month").format('M')){
+          tempData[5].total += data[i].Emission;
           tempData[5].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(6, "month").format('M')){
-          tempData[6].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(6, "month").format('M')){
+          tempData[6].total += data[i].Emission;
           tempData[6].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(7, "month").format('M')){
-          tempData[7].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(7, "month").format('M')){
+          tempData[7].total += data[i].Emission;
           tempData[7].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(8, "month").format('M')){
-          tempData[8].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(8, "month").format('M')){
+          tempData[8].total += data[i].Emission;
           tempData[8].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(9, "month").format('M')){
-          tempData[9].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(9, "month").format('M')){
+          tempData[9].total += data[i].Emission;
           tempData[9].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(10, "month").format('M')){
-          tempData[10].total += data[i].emissions;
+        else if(dayjs(data[i].Date).format('M') === startDay.add(10, "month").format('M')){
+          tempData[10].total += data[i].Emission;
           tempData[10].amount++;
         }
-        else if(dayjs(data[i].date).format('M') === startDay.add(11, "month").format('M')){
+        else if(dayjs(data[i].Date).format('M') === startDay.add(11, "month").format('M')){
           console.log("JEEEE");
-          tempData[11].total += data[i].emissions;
+          tempData[11].total += data[i].Emission;
           tempData[11].amount++;
         }
         else {
-          console.log(`Error: Couldn't fit value to a month: ${typeof(dayjs(data[i].date).format('M'))} ${data[i].date}, ${data[i].emissions}`);
+          console.log(`Error: Couldn't fit value to a month: ${typeof(dayjs(data[i].Date).format('M'))} ${data[i].Date}, ${data[i].Emission}`);
         }
       }
 
@@ -147,45 +147,14 @@ function formatAverageEmissionsTimePeriodData(data){
     return(barData);
   }
 
-/*function formatAverageEmissionsTimePeriodData(data, timeFrame){
-  let finalData = {title: '', emissions: 0, unit: 'g CO2e/km'};
-  for(let i = 0; i<data.length; i++){
-    finalData.emissions += data[i].emissions;
-  }
 
-  if(finalData.emissions >= 1000){
-    finalData.emissions = finalData.emissions / 1000;
-    finalData.unit = 'kg CO2e/km';
-  }
-
-  switch(timeFrame){
-    case 1:
-      finalData.title = "seven days";
-      return finalData;
-    case 2:
-      finalData.title = "30 days";
-      return finalData;
-    case 3:
-      finalData.title = "three months";
-      return finalData;
-    case 4:
-      finalData.title = "six months";
-      return finalData;
-    case 5:
-      finalData.title = "year";
-      return finalData;
-    default:
-      return;
-  }
-}*/
-
-export default function AverageEmissions({data, chartConfig}){
+export default function AverageEmissions({data, chartConfig, loading}){
     const finalAverageData = formatAverageEmissionsTimePeriodData(data);
     return(
     <View>
         <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', margin: 10}}>Average emissions per trip during the past year</Text>
-        <Text style={{textAlign: "left", fontSize: 12, marginLeft: 2, marginBottom: 2, marginTop: 50, color: "black"}}>g CO2e/km</Text>
-        <BarChart
+        <Text style={{textAlign: "left", fontSize: 12, marginLeft: 2, marginBottom: 2, marginTop: 50, color: "black"}}>kg CO2e/km</Text>
+        {loading === true ? <View height={220}></View> : <BarChart
           style={{
             marginBottom: 50,
             marginLeft: -10
@@ -199,6 +168,6 @@ export default function AverageEmissions({data, chartConfig}){
           fromZero={true}
           showBarTops={false}
           showValuesOnTopOfBars={true}
-        />
+        />}
       </View>);
 }
