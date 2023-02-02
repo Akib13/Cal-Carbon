@@ -28,7 +28,7 @@ const db = SQLite.openDatabase(
 
 
 
-export default function Trip({ navigation }) {
+export default function Trip({ route, navigation }) {
 
     const { emission, trips, tripID, fuels, electricity } = useSelector(state => state.tripReducer);
     const dispatch = useDispatch();
@@ -86,41 +86,53 @@ export default function Trip({ navigation }) {
     ];
 
     const getDefaultMethod = () => {
-        try {
-            console.log("** GETTING DATA***");
-           db.transaction((tx) => {
-                tx.executeSql(
-                    "SELECT * FROM DefaultMethod",
-                    [],
-                    (tx, results) => {
-                        console.log("RESULTS: ", results.rows.length)
-                        var len = results.rows.length;
-                        if (len > 0) {
-                            //setDefaultMethodExists(true);
-                            console.log("FOUND DATA");
-                            //var DB_id = results.rows.item(0).ID;
-                            var db_vehicle = results.rows.item(0).Vehicle;
-                            var db_vehicleType = results.rows.item(0).Vehicle_Type;
-                            var db_fueltype = results.rows.item(0).Fuel_Type;
-                            var db_fuel = results.rows.item(0).Fuel;
-                            var db_cons = results.rows.item(0).Consumption;
-                            var dbpsg = results.rows.item(0).Passengers;
-    
-                            setVehicle(db_vehicle);
-                            setCar(db_vehicleType);
-                            setFuel(db_fuel);
-                            setFuelType(db_fueltype);
-                            setConsumption(db_cons);
-                            setPassengers(dbpsg);
-                            console.log("*****DATA FROM DB******", db_vehicle, db_vehicleType, db_fueltype, db_fuel, db_cons, dbpsg);
-                        }else{
-                            console.log("DIDN*T FIND DATA");
+        if(route.params){
+            setVehicle(route.params.Vehicle);
+            setCar(route.params.Vehicle_Type);
+            setFuel(route.params.Fuel);
+            setFuelType(route.params.Fuel_Type);
+            setConsumption(route.params.Consumption);
+            console.log("Route psg", route.params.Passengers);
+            setPassengers(route.params.Passengers);
+            setDistance(route.params.Distance);
+        }
+        else {
+            try {
+                console.log("** GETTING DATA***");
+               db.transaction((tx) => {
+                    tx.executeSql(
+                        "SELECT * FROM DefaultMethod",
+                        [],
+                        (tx, results) => {
+                            console.log("RESULTS: ", results.rows.length)
+                            var len = results.rows.length;
+                            if (len > 0) {
+                                //setDefaultMethodExists(true);
+                                console.log("FOUND DATA");
+                                //var DB_id = results.rows.item(0).ID;
+                                var db_vehicle = results.rows.item(0).Vehicle;
+                                var db_vehicleType = results.rows.item(0).Vehicle_Type;
+                                var db_fueltype = results.rows.item(0).Fuel_Type;
+                                var db_fuel = results.rows.item(0).Fuel;
+                                var db_cons = results.rows.item(0).Consumption;
+                                var dbpsg = results.rows.item(0).Passengers;
+        
+                                setVehicle(db_vehicle);
+                                setCar(db_vehicleType);
+                                setFuel(db_fuel);
+                                setFuelType(db_fueltype);
+                                setConsumption(db_cons);
+                                setPassengers(dbpsg);
+                                console.log("*****DATA FROM DB******", db_vehicle, db_vehicleType, db_fueltype, db_fuel, db_cons, dbpsg);
+                            }else{
+                                console.log("DIDN*T FIND DATA");
+                            }
                         }
-                    }
-                )
-            })
-        } catch (error) {
-            console.log(error);
+                    )
+                })
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 
@@ -193,7 +205,7 @@ export default function Trip({ navigation }) {
             tx.executeSql(
                 "CREATE TABLE IF NOT EXISTS "
                 + "Trips "
-                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, Vehicle TEXT, Vehicle_Type TEXT, Fuel TEXT, Distance INTEGER, Date TEXT, Category TEXT, Emission INTEGER);"
+                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, Vehicle TEXT, Vehicle_Type TEXT, Fuel TEXT, Consumption TEXT, Passengers INTEGER, Distance INTEGER, Date TEXT, Category TEXT, Emission INTEGER);"
             )
         })
     };
@@ -207,11 +219,16 @@ export default function Trip({ navigation }) {
             try {
                 console.log("-----SETTING TRIP-------");
                 console.log("Date: " + date);
+                if(!saveToFavorites){
+                    setIName(null);
+                }
+                console.log(saveToFavorites);
+                console.log(iname);
 
                 await db.transaction( async (tx) => {
                     await tx.executeSql(
-                        "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel, Distance, Date, Category, Emission) VALUES (?,?,?,?,?,?,?)",
-                        [vehicle, car, fuel, distance, test, saveToFavorites ? iname : null, calculate()]
+                        "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel, Consumption, Distance, Passengers, Date, Category, Emission) VALUES (?,?,?,?,?,?,?,?)",
+                        [vehicle, car, fuel, consumption, distance, passengers, test, iname, calculate()]
                     );
                 })
                 //navigation.navigate("Map");
@@ -224,7 +241,7 @@ export default function Trip({ navigation }) {
 
     const calculate = () => {
         let methodToFind = "";
-        if(vehicle === "Car"){
+        if(vehicle === "Car" && fuelType !== fuelTypes[3]){
             methodToFind = car;
         }
         else {
@@ -319,6 +336,7 @@ export default function Trip({ navigation }) {
                     style={styles.input}
                     onChangeText={(val) => setConsumption(val)}
                     defaultValue={consumption.toString()}
+                    value={consumption.toString()}
                     keyboardType="decimal-pad"
                     inputMode="decimal"
                 />
@@ -326,7 +344,7 @@ export default function Trip({ navigation }) {
                 <TextInput
                     style={styles.input}
                     onChangeText={(val) => setPassengers(val.replace(/[^0-9]/g, ''))}
-                    value={passengers}
+                    value={passengers.toString()}
                     defaultValue={passengers.toString()}
                     keyboardType="decimal-pad"
                 />
@@ -337,7 +355,7 @@ export default function Trip({ navigation }) {
         <Text>{"Total distance (km)"}</Text>
         <TextInput
             style={styles.input}
-            value={distance}
+            value={distance.toString()}
             onChangeText={(value) => setDistance(value)}
             keyboardType="decimal-pad"
         />
@@ -412,7 +430,7 @@ export default function Trip({ navigation }) {
         </View>
         <View>
             <Text style={styles.result_text}>
-                {vehicle.length !== 0 ? calculate(vehicle, car) : 0} g CO2 -ekv
+                {vehicle.length !== 0 ? calculate(vehicle, car) : 0} kg CO2 -ekv
             </Text>
         </View>
         <Button title='Save' onPress={() => { 

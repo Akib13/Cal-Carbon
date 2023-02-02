@@ -119,13 +119,13 @@ export default function Result({ route, navigation }) {
       <Text style={styles.mid_text}>Total Emissions</Text>
       <View>
         <Text style={styles.result_text}>
-          {route.params.total_emission} g CO2 -ekv
+          {route.params.total_emission} kg CO2 -ekv
         </Text>
       </View>
       <Text style={styles.mid_text}>Baseline Emissions</Text>
       <View>
         <Text style={styles.result_text}>
-          {calculate_base()} g CO2 -ekv
+          {calculate_base()} kg CO2 -ekv
         </Text>
       </View>
       <View>
@@ -133,7 +133,7 @@ export default function Result({ route, navigation }) {
       </View>
     <Button title='Done' onPress={() => {
       updateData();
-      navigation.navigate('Map')}}/>
+      navigation.navigate('Home')}}/>
     </View>
   )
 }

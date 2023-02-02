@@ -1,6 +1,7 @@
 import { View, Text, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import dayjs from "dayjs";
+import { timeFrameEnum } from "../utils/Enums";
 
 function formatTripsTimePeriodData(data, timeFrame){
     let barData = {
@@ -15,12 +16,12 @@ function formatTripsTimePeriodData(data, timeFrame){
             (opacity = 1) => '#035efc',
             (opacity = 1) => '#c203fc',
             (opacity = 1) => '#fc03be',
-            (opacity = 1) => '#BE95FF',
-            (opacity = 1) => '#fcba03',
-            (opacity = 1) => '#fc0303',
-            (opacity = 1) => '#035efc',
-            (opacity = 1) => '#c203fc',
-            (opacity = 1) => '#fc03be',
+            (opacity = 1) => '#07faa5',
+            (opacity = 1) => '#fa9107',
+            (opacity = 1) => '#024545',
+            (opacity = 1) => '#450222',
+            (opacity = 1) => '#b7ff0f',
+            (opacity = 1) => '#c22362',
           ]
         }
       ]
@@ -46,44 +47,44 @@ function formatTripsTimePeriodData(data, timeFrame){
     }
 
     for(let i = 0; i < data.length; i++){
-      if(dayjs(data[i].date).format('M') === startMonth){
+      if(dayjs(data[i].Date).format('M') === startMonth){
         barData.datasets[0].data[0]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(1, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(1, "month").format('M')){
         barData.datasets[0].data[1]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(2, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(2, "month").format('M')){
         barData.datasets[0].data[2]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(3, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(3, "month").format('M')){
         barData.datasets[0].data[3]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(4, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(4, "month").format('M')){
         barData.datasets[0].data[4]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(5, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(5, "month").format('M')){
         barData.datasets[0].data[5]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(6, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(6, "month").format('M')){
         barData.datasets[0].data[6]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(7, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(7, "month").format('M')){
         barData.datasets[0].data[7]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(8, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(8, "month").format('M')){
         barData.datasets[0].data[8]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(9, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(9, "month").format('M')){
         barData.datasets[0].data[9]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(10, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(10, "month").format('M')){
         barData.datasets[0].data[10]++;
       }
-      else if(dayjs(data[i].date).format('M') === startDay.add(11, "month").format('M')){
+      else if(dayjs(data[i].Date).format('M') === startDay.add(11, "month").format('M')){
         barData.datasets[0].data[11]++;
       }
       else {
-        console.log(`Error: Couldn't fit value to a month: ${typeof(dayjs(data[i].date).format('M'))} ${data[i].date}, ${data[i].emissions}`);
+        console.log(`Error: Couldn't fit value to a month: ${typeof(dayjs(data[i].Date).format('M'))} ${data[i].Date}, ${data[i].emissions}`);
       }
     }
 
@@ -95,7 +96,7 @@ export default function TripsByTime({data, chartConfig, timeFrame}){
     const finalTripNumberData = formatTripsTimePeriodData(data, timeFrame);
             return(
               <View>
-                <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', margin: 10}}>Number of trips taken during the past year</Text>
+                <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', margin: 10}}>Number of trips taken during the past {timeFrameEnum[timeFrame]}</Text>
                 <BarChart
                   style={{
                     marginVertical: 50,
@@ -111,6 +112,7 @@ export default function TripsByTime({data, chartConfig, timeFrame}){
                   fromZero={true}
                   showBarTops={true}
                   showValuesOnTopOfBars={true}
+                  flatColor={true}
                 />
               </View>);
 }

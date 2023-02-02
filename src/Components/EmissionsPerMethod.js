@@ -60,77 +60,77 @@ export default function EmissionsPerMethod({data, chartConfig, loading}){
     {
       name: methods[1],
       emissions: 0,
-      color: "#0562f7",
+      color: "#fcba03",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[2],
       emissions: 0,
-      color: "#f70d05",
+      color: "#fc0303",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[3],
       emissions: 0,
-      color: "#05f73e",
+      color: "#035efc",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[4],
       emissions: 0,
-      color: "#f7f705",
+      color: "#c203fc",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[5],
       emissions: 0,
-      color: "#b705f7",
+      color: "#fc03be",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[6],
       emissions: 0,
-      color: "#f78e05",
+      color: "#07faa5",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[7],
       emissions: 0,
-      color: "#f705f3",
+      color: "#fa9107",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[8],
       emissions: 0,
-      color: "#2d05f7",
+      color: "#024545",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[9],
       emissions: 0,
-      color: "#f7f705",
+      color: "#450222",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[10],
       emissions: 0,
-      color: "#b705f7",
+      color: "#b7ff0f",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },
     {
       name: methods[11],
       emissions: 0,
-      color: "#f78e05",
+      color: "#c22362",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15
     },

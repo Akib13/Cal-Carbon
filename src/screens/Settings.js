@@ -72,7 +72,8 @@ const styles = StyleSheet.create({
     height: '15%',
     alignItems: 'flex-start',
     justifyContent: 'center',
-    marginLeft: '5%'
+    marginLeft: '5%',
+    marginBottom: 20,
   },
   text: {
     fontSize: 20,

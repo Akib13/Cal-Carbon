@@ -2,6 +2,7 @@ import { View, Text, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
+import { timeFrameEnum } from "../utils/Enums";
 
 export function getWeekEmissions(days, data){
   let tempData = [0, 0, 0, 0, 0, 0, 0];
@@ -178,6 +179,12 @@ function formatEmissionsTimePeriodData(data, timeFrame){
             (opacity = 1) => '#035efc',
             (opacity = 1) => '#c203fc',
             (opacity = 1) => '#fc03be',
+            (opacity = 1) => '#07faa5',
+            (opacity = 1) => '#fa9107',
+            (opacity = 1) => '#024545',
+            (opacity = 1) => '#450222',
+            (opacity = 1) => '#b7ff0f',
+            (opacity = 1) => '#c22362',
           ]
         }
       ]
@@ -311,7 +318,7 @@ export default function EmissionsByTime({data, chartConfig, timeFrame, loading})
     const finalData = formatEmissionsTimePeriodData(data, timeFrame);
           return(
             <View>
-              <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Total emissions this year</Text>
+              <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Total emissions during the past {timeFrameEnum[timeFrame]}</Text>
               <Text style={{textAlign: "left", fontSize: 12, marginLeft: 2, marginBottom: 2, marginTop: 50, color: "black"}}>kg CO2e</Text>
               {loading === true ? <View style={{height: 220}}></View> : <BarChart
                 style={{

@@ -26,7 +26,7 @@ function PastTripListItem({trip, deleteTrip}){
             <Text style={{margin: 5, width: 60}}>{trip.Date}</Text>
             <Text style={{margin: 5, width: 70}}>{trip.Vehicle}</Text>
             <Text style={{margin: 5, width: 70}}>{trip.Distance} km</Text>
-            <Text style={{margin: 5, width: 70}}>{trip.Emission} g CO2e</Text>
+            <Text style={{margin: 5, width: 70}}>{trip.Emission} kg CO2e</Text>
             <TouchableOpacity style={{margin: 5}} onPress={() => {deleteTrip(trip.ID)}}>
                 <FontAwesome5 
                     name={'trash'}

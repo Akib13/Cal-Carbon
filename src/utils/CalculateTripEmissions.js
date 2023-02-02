@@ -16,5 +16,5 @@ export function CalculateTripEmissions(method, emissions, distance, passengers, 
     }
 
     console.log("FINAL EMISSIONS: ", finalEmissions);
-    return finalEmissions.toFixed(2);
+    return (finalEmissions / 1000).toFixed(2);
 }

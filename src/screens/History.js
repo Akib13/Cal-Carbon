@@ -251,6 +251,7 @@ const History = ({ navigation }) => {
               temp.push(results.rows.item(i));
             }
             setFlatListItems(temp);
+            console.log(temp)
           }
         );
       });
@@ -276,14 +277,23 @@ const History = ({ navigation }) => {
       <View
         key={item.ID}
         style={{ backgroundColor: 'white', padding: 20 }}>
-        <Text>ID: {item.ID}</Text>
-        <Text>Transport: {item.Vehicle}</Text>
-        <Text>Type: {item.Vehicle_Type}</Text>
-        <Text>Fuel: {item.Fuel}</Text>
-        <Text>Distance: {item.Distance}</Text>
-        <Text>Date: {item.Date}</Text>
-        <Text>Type: {item.Category}</Text>
-        <Text>Emission: {item.Emission}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Trip', {
+            Vehicle: item.Vehicle,
+            Vehicle_Type: item.Vehicle_Type,
+            Fuel_Type: item.Fuel_Type,
+            Fuel: item.Fuel,
+            Consumption: item.Consumption,
+            Distance: item.Distance,
+            Passengers: item.Passengers
+          })}>
+            <Text>Method: {item.Vehicle}</Text>
+            {item.Vehicle_Type.length !== 0 ? <Text>Vehicle type: {item.Vehicle_Type}</Text> : null}
+            <Text>Fuel: {item.Fuel}</Text>
+            <Text>Distance: {item.Distance}</Text>
+            <Text>Date: {item.Date}</Text>
+            <Text>Type: {item.Category}</Text>
+            <Text>Emission: {item.Emission}</Text>
+          </TouchableOpacity>
       </View>
     );
   };

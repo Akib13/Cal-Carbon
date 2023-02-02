@@ -134,7 +134,7 @@ export default function Home({ navigation }) {
       </View>
       <View style={[styles.text_view, {justifyContent: 'flex-start'}]}>
         <Text style={[styles.text, {fontSize: 20}]}>
-            Your emissions this month is: {test} CO2e
+            Your emissions this month: {test} kg CO2e
           </Text>
       </View>
     </View>

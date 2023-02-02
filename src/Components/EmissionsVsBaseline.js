@@ -17,25 +17,25 @@ function getWeekBLEmissions(days, data, baselineMethod){
   for(let i = 0; i<data.length; i++){
     console.log("data i",data[i].Distance)
     if(data[i].Date === days[0].format("YYYY-MM-DD")){
-      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(data[i].Date === days[1].format("YYYY-MM-DD")){
-      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(data[i].Date === days[2].format("YYYY-MM-DD")){
-      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(data[i].Date === days[3].format("YYYY-MM-DD")){
-      tempData[3] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[3] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(data[i].Date === days[4].format("YYYY-MM-DD")){
-      tempData[4] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[4] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(data[i].Date === days[5].format("YYYY-MM-DD")){
-      tempData[5] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[5] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(data[i].Date === days[6].format("YYYY-MM-DD")){
-      tempData[6] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[6] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
       
     }
     else {
@@ -52,16 +52,16 @@ function getMonthBLEmissions(weeks, data, baselineMethod){
     let week = dayjs(data[i].Date).isoWeek();
 
     if(week === weeks[0]){
-      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(week === weeks[1]){
-      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(week === weeks[2]){
-      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(week === weeks[3]){
-      tempData[3] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[3] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else {
       //console.log(`Error: Couldn't fit data to any day of the week. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, emissions: ${data[i].emissions}`)
@@ -77,13 +77,13 @@ function getThreeMonthsBLEmissions(months, data, baselineMethod){
     const month = dayjs(data[i].Date).month();
 
     if(month === months[0]){
-      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[1]){
-      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[2]){
-      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else {
       console.log(`Error: Couldn't fit data to any month. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, emissions: ${data[i].emissions}`)
@@ -99,22 +99,22 @@ function getSixMonthsBLEmissions(months, data, baselineMethod){
     const month = dayjs(data[i].Date).month();
 
     if(month === months[0]){
-      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[1]){
-      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[2]){
-      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[3]){
-      tempData[3] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[3] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[4]){
-      tempData[4] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[4] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[5]){
-      tempData[5] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[5] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else {
       console.log(`Error: Couldn't fit data to any month. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, emissions: ${data[i].emissions}`)
@@ -130,40 +130,40 @@ function getYearBLEmissions(months, data, baselineMethod){
     const month = dayjs(data[i].Date).month();
 
     if(month === months[0]){
-      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[0] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[1]){
-      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[1] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[2]){
-      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[2] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[3]){
-      tempData[3] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[3] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[4]){
-      tempData[4] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[4] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[5]){
-      tempData[5] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[5] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[6]){
-      tempData[6] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[6] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[7]){
-      tempData[7] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[7] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[8]){
-      tempData[8] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[8] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[9]){
-      tempData[9] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[9] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[10]){
-      tempData[10] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[10] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else if(month === months[11]){
-      tempData[11] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions)) / 1000;
+      tempData[11] += parseFloat(CalculateTripEmissions(baselineMethod.vehicle, baselineMethod.emissions, data[i].Distance, baselineMethod.passengers, baselineMethod.consumption, baselineMethod.fuelEmissions));
     }
     else {
       console.log(`Error: Couldn't fit data to any month. Date: ${data[i].Date}, method: ${data[i].vehicle_type}, emissions: ${data[i].emissions}`)
@@ -300,33 +300,18 @@ function getBaselineComparisonData(data, timeFrame, baselineMethod, barData){
     }
 
     barData.datasets[0].data = getEmissionComparison(emissions, baselineEmissions);
-    barData.datasets[0].data.forEach(number => {
-      number.toFixed(2)
+    let temp = [];
+    barData.datasets[0].data.map(number => {
+      temp.push(number.toFixed(2));
     });
-    console.log(barData)
+    barData.datasets[0].data = temp;
+    console.log(barData.datasets[0].data)
     return(barData);
 
 }
 
-const chartConfig={
-  backgroundColor: "#ffffff",
-  backgroundGradientFrom: "#ffffff",
-  backgroundGradientTo: "#ffffff",
-  decimalPlaces: 2,
-  barPercentage: 0.5,
-  fillShadowGradientFromOpacity: 0,
-  fillShadowGradientFromOpacity: 0,
-  fillShadowGradientOpacity: 0,
-  fillShadowGradient: "#c2cbd1",
-  color: (opacity = 1) => {return opacity <= 0.2 ? `rgba(11, 252, 3, ${opacity})` : `rgba(219, 12, 4, ${opacity})`},
-  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-  style: {
-    borderRadius: 16
-  }
-};
 
-
-export default function EmissionsVsBaseline({data, timeFrame, loading}){
+export default function EmissionsVsBaseline({data, timeFrame, loading, chartConfig}){
   let finalData = {
     labels: [],
     datasets: [
@@ -334,11 +319,17 @@ export default function EmissionsVsBaseline({data, timeFrame, loading}){
         data: [],
         colors: [
           (opacity = 1) => '#BE95FF',
-          (opacity = 1) => '#fcba03',
-          (opacity = 1) => '#fc0303',
-          (opacity = 1) => '#035efc',
-          (opacity = 1) => '#c203fc',
-          (opacity = 1) => '#fc03be',
+            (opacity = 1) => '#fcba03',
+            (opacity = 1) => '#fc0303',
+            (opacity = 1) => '#035efc',
+            (opacity = 1) => '#c203fc',
+            (opacity = 1) => '#fc03be',
+            (opacity = 1) => '#07faa5',
+            (opacity = 1) => '#fa9107',
+            (opacity = 1) => '#024545',
+            (opacity = 1) => '#450222',
+            (opacity = 1) => '#b7ff0f',
+            (opacity = 1) => '#c22362',
         ]
       }
     ]
@@ -353,8 +344,8 @@ export default function EmissionsVsBaseline({data, timeFrame, loading}){
 
     return(
       <View>
-        <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Total emissions this year</Text>
-        <Text style={{textAlign: "left", fontSize: 12, marginLeft: 2, marginBottom: 2, marginTop: 50, color: "black"}}>g CO2e</Text>
+        <Text style={{fontSize: 30, fontWeight: 'bold', color: '#000000', textAlign: 'center', marginTop: 10}}>Emissions compared to same trips with baseline method</Text>
+        <Text style={{textAlign: "left", fontSize: 12, marginLeft: 2, marginBottom: 2, marginTop: 50, color: "black"}}>kg CO2e</Text>
         {loading !== true ? <BarChart
           style={{
             alignItems: 'center'
@@ -366,6 +357,8 @@ export default function EmissionsVsBaseline({data, timeFrame, loading}){
           verticalLabelRotation={0}
           withCustomBarColorFromData={true}
           flatColor={true}
-        /> : null}
+          showValuesOnTopOfBars={true}
+          showBarTops={true}
+        /> : <View style={{height: 220}}></View>}
       </View>);
 }

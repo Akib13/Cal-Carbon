@@ -24,12 +24,12 @@ function formatAverageEmissionsTimePeriodData(data){
             (opacity = 1) => '#035efc',
             (opacity = 1) => '#c203fc',
             (opacity = 1) => '#fc03be',
-            (opacity = 1) => '#BE95FF',
-            (opacity = 1) => '#fcba03',
-            (opacity = 1) => '#fc0303',
-            (opacity = 1) => '#035efc',
-            (opacity = 1) => '#c203fc',
-            (opacity = 1) => '#fc03be',
+            (opacity = 1) => '#07faa5',
+            (opacity = 1) => '#fa9107',
+            (opacity = 1) => '#024545',
+            (opacity = 1) => '#450222',
+            (opacity = 1) => '#b7ff0f',
+            (opacity = 1) => '#c22362',
           ]
         }
       ]
@@ -119,7 +119,6 @@ function formatAverageEmissionsTimePeriodData(data){
           tempData[10].amount++;
         }
         else if(dayjs(data[i].Date).format('M') === startDay.add(11, "month").format('M')){
-          console.log("JEEEE");
           tempData[11].total += data[i].Emission;
           tempData[11].amount++;
         }
@@ -142,7 +141,6 @@ function formatAverageEmissionsTimePeriodData(data){
       getAverage(tempData[10].total, tempData[10].amount),
       getAverage(tempData[11].total, tempData[11].amount),
     ]
-    console.log(barData);
     
     return(barData);
   }
@@ -166,8 +164,9 @@ export default function AverageEmissions({data, chartConfig, loading}){
           verticalLabelRotation={0}
           withCustomBarColorFromData={true}
           fromZero={true}
-          showBarTops={false}
+          showBarTops={true}
           showValuesOnTopOfBars={true}
+          flatColor={true}
         />}
       </View>);
 }
