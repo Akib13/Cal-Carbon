@@ -14,7 +14,6 @@ import SQLite from 'react-native-sqlite-storage';
 import dayjs from 'dayjs';
 import { CalculateTripEmissions } from '../utils/CalculateTripEmissions';
 import { fuelTypes, carTypes, units, methods } from '../utils/Enums';
-import { getElectricityDataAsync, getFuelDataAsync, getMethodDataAsync } from '../utils/APICalls';
 
 const db = SQLite.openDatabase(
     {

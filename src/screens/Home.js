@@ -6,6 +6,7 @@ import { setTripID, setTrips } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SQLite from 'react-native-sqlite-storage';
+import { setBaseVehicle, setBaseVehicleType, setBaseFuel, setBaseFuelType, setBaseEmission, setBaseConsumption, setBaseFuelEmission, getEmission, getElectricity, getFuels, setBasePassengers } from '../redux/actions';
 
 const db = SQLite.openDatabase(
   {
@@ -16,65 +17,28 @@ const db = SQLite.openDatabase(
   error => {console.log(error)},
 );
 
+
+
 export default function Home({ navigation }) {
 
-    /*const {trips} = useSelector(state => state.tripReducer);
-    const dispatch = useDispatch(); 
-
-    useEffect(() => { 
-        getTrips();
-    }, [])
-
-    const getTrips = () => {
-      AsyncStorage.getItem('Trips')
-      .then(trips => {
-          const parsedTasks = JSON.parse(trips);
-          if (parsedTasks && typeof parsedTasks === 'object') {
-              dispatch(setTrips(parsedTasks));
-          }
-      })
-      .catch(error => console.log(error))
-  };*/
-
   const [test, setTest] = useState('');
+  const dispatch = useDispatch();
+  const { base_vehicle } = useSelector(state => state.tripReducer);
 
   useEffect(() => {
     navigation.addListener('focus', ()=> {
-      //getDataTest();
       getDate();
+      getBaselineData();
     });
   }, []);
-
-  const getDataTest = () => {
-    try {
-      db.transaction((tx) => {
-        tx.executeSql(
-          "SELECT SUM(Emission) AS TEST FROM Trips",
-          [],
-          (tx, results) => {
-            //console.log(results.rows.item(0).TEST);
-            var len = results.rows.length;
-                  if (len > 0) {
-                      var DB_test = results.rows.item(0).TEST;
-                      setTest(DB_test);
-                  }
-          }
-        );
-      });
-    } catch (error) {
-        console.log(error);
-    }
-  };
 
   const getDate = () => {
     try {
       db.transaction((tx) => {
         tx.executeSql(
-          //"SELECT strftime('%m','now') AS TEST FROM Trips",
           "SELECT SUM(Emission) AS TEST FROM Trips WHERE strftime('%m', Date) = strftime('%m','now')",
           [],
           (tx, results) => {
-            //console.log(results.rows.item(0).TEST);
             var len = results.rows.length;
                   if (len > 0) {
                       var DB_test = results.rows.item(0).TEST;
@@ -87,6 +51,46 @@ export default function Home({ navigation }) {
         console.log(error);
     }
   };
+
+  const getBaselineData = () =>{
+  
+    if(base_vehicle.length === 0){
+      try {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT * FROM Baseline",
+                [],
+                (tx, results) => {
+                    var len = results.rows.length;
+                    if (len > 0) {
+                        var db_vehicle = results.rows.item(0).Vehicle;
+                        var db_vehicleType = results.rows.item(0).Vehicle_Type;
+                        var db_fueltype = results.rows.item(0).Fuel_Type;
+                        var db_fuel = results.rows.item(0).Fuel;
+                        var db_cons = results.rows.item(0).Consumption;
+                        var dbpsg = results.rows.item(0).Passengers;
+                        var dbemission = results.rows.item(0).Emission;
+                        var dbfuelemission = results.rows.item(0).Fuel_Emission;
+  
+                        dispatch(setBaseVehicle(db_vehicle));
+                        dispatch(setBaseVehicleType(db_vehicleType));
+                        dispatch(setBaseFuel(db_fuel));
+                        dispatch(setBaseFuelType(db_fueltype));
+                        dispatch(setBaseConsumption(db_cons));
+                        dispatch(setBasePassengers(dbpsg));
+                        dispatch(setBaseEmission(dbemission));
+                        dispatch(setBaseFuelEmission(dbfuelemission));
+                    }else{
+                        console.log("Couldn't find baseline method");
+                    }
+                }
+            )
+        })
+    } catch (error) {
+        console.log(error);
+    }
+    }
+  }
 
   return (
     <View style={styles.body}>
@@ -99,9 +103,7 @@ export default function Home({ navigation }) {
         <View style={styles.btn_view_row}>
           <TouchableOpacity
             style={styles.button}
-            //data = {trips}
             onPress={() => {
-                //dispatch(setTripID(trips.length + 1));
                 navigation.navigate('Trip');
             }}
           >

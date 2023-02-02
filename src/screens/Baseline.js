@@ -1,23 +1,134 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, Button } from 'react-native';
 import React from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
-import { setBaseVehicle, setBaseVehicleType, setBaseFuel, setBaseFuelType, setBaseEmission, setBaseConsumption, setBaseFuelEmission, getEmission, getElectricity, getFuels, setBasePassengers } from '../redux/actions';
+import { getEmission, getElectricity, getFuels } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { fuelTypes, carTypes, units, methods, electricityFuels, liquidFuels, altFuels } from '../utils/Enums';
+import SQLite from 'react-native-sqlite-storage';
+
+const db = SQLite.openDatabase(
+    {
+        name: 'MainDB',
+        location: 'default',
+    },
+    (success) => {console.log("here", success.success)},
+    error => {console.log("something went wrong", error)},
+);
+
+const createTable = async () => {
+    console.log("Creating table")
+    await db.transaction((tx) => {
+         tx.executeSql(
+            "CREATE TABLE IF NOT EXISTS Baseline "
+            + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, Vehicle TEXT, Vehicle_Type TEXT, Fuel_Type TEXT, Fuel TEXT, Consumption TEXT, Passengers INTEGER, Emission TEXT, Fuel_Emission TEXT);",
+            () => {console.log("DONE WITH table ")},
+                error => {console.log(error)}
+        );
+    });
+    console.log("TABLE CREATED")
+     db.transaction((tx) => {
+        tx.executeSql("SELECT count(*) FROM MainDB WHERE type='table'",
+        (results) => {console.log("here", results)}
+        )
+    })
+};
+
+/*const createTable = () => {
+    console.log("creating table");
+    db.transaction(function (txn) {
+        txn.executeSql(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='Student_Table'",
+          [],
+          function (tx, res) {
+            console.log('item:', res);
+            if (res.rows.length !== 0) {
+              txn.executeSql('DROP TABLE IF EXISTS Student_Table', []);
+            }
+          }
+        );
+        console.log("After execute");
+      })
+      console.log('SQLite Database and Table Successfully Created...');
+    };*/
+
+const updateData = (vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions, baselineExists) => {
+    console.log("saving", vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions, baselineExists)
+    db.transaction((tx) => {
+        if(baselineExists){
+            tx.executeSql(
+                "UPDATE Baseline SET Vehicle=?, Vehicle_Type=?, Fuel_Type=?, Fuel=?, Consumption=?, Passengers=?, Emission=?, Fuel_Emission=? WHERE ID=1",
+                [vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions],
+                () => {console.log("Success!", "Your data has been updated.")},
+                error => {console.log(error)}
+            );
+        } else {
+            console.log("adding to db")
+            tx.executeSql(
+                "INSERT INTO Baseline ( Vehicle, Vehicle_Type, Fuel_Type, Fuel, Consumption, Passengers, Emission, Fuel_Emission) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions],
+                (tx, results) => {console.log("Results", results)},
+                error => {console.log(error)}
+            );
+        }
+    })
+};
 
 export default function Baseline({ navigation }) {
 
-    const { base_vehicle, base_vehicle_type, base_fuel, emission, fuels, electricity, base_consumption, base_passengers, base_fuel_type, base_fuel_emission } = useSelector(state => state.tripReducer);
+    const { emission, fuels, electricity } = useSelector(state => state.tripReducer);
     const dispatch = useDispatch();
     const [fuelData, setFuelData] = useState([]);
-    const [fuelType, setFuelType] = useState([]);
-    const [vehicle, setVehicle] = useState(base_vehicle);
-    const [vehicleType, setVehicleType] = useState(base_vehicle_type);
-    const [fuel, setFuel] = useState(base_fuel);
-    const [consumption, setConsumption] = useState(base_consumption);
-    const [passengers, setPassengers] = useState(base_passengers);
+    const [fuelType, setFuelType] = useState(0);
+    const [vehicle, setVehicle] = useState("");
+    const [vehicleType, setVehicleType] = useState("");
+    const [fuel, setFuel] = useState("");
+    const [consumption, setConsumption] = useState(0);
+    const [passengers, setPassengers] = useState(1);
+    const [baseLineExists, setBaselineExists] = useState(false);
+
+    const getData = async () => {
+        try {
+            console.log("** GETTING DATA***");
+           db.transaction((tx) => {
+                tx.executeSql(
+                    "SELECT * FROM Baseline",
+                    [],
+                    (tx, results) => {
+                        console.log("RESULTS: ", results.rows.length)
+                        var len = results.rows.length;
+                        if (len > 0) {
+                            setBaselineExists(true);
+                            console.log("FOUND DATA");
+                            //var DB_id = results.rows.item(0).ID;
+                            var db_vehicle = results.rows.item(0).Vehicle;
+                            var db_vehicleType = results.rows.item(0).Vehicle_Type;
+                            var db_fueltype = results.rows.item(0).Fuel_Type;
+                            var db_fuel = results.rows.item(0).Fuel;
+                            var db_cons = results.rows.item(0).Consumption;
+                            var dbpsg = results.rows.item(0).Passengers;
+                            var dbemission = results.rows.item(0).Emission;
+                            var dbfuelemission = results.rows.item(0).Fuel_Emission;
+    
+                            //setID(DB_id);
+                            setVehicle(db_vehicle);
+                            setVehicleType(db_vehicleType);
+                            setFuel(db_fuel);
+                            setFuelType(db_fueltype);
+                            setConsumption(db_cons);
+                            setPassengers(dbpsg);
+                            console.log("*****DATA FROM DB******", db_vehicle, db_vehicleType, db_fueltype, db_fuel, db_cons, dbpsg, dbemission, dbfuelemission);
+                        }else{
+                            console.log("DIDN*T FIND DATA");
+                        }
+                    }
+                )
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const methodsData = [
         {key:'1', value: methods[1]},
@@ -47,17 +158,11 @@ export default function Baseline({ navigation }) {
     ];
 
     useEffect(() => {
+        createTable();
+        getData();
         dispatch(getEmission());
         dispatch(getFuels());
         dispatch(getElectricity());
-        console.log("BAse:", base_vehicle, base_vehicle_type, base_fuel_type, base_fuel, base_consumption, base_passengers, base_fuel_emission);
-        setVehicle(base_vehicle);
-        setVehicleType(base_vehicle_type);
-        setFuelType(base_fuel_type);
-        setFuel(base_fuel);
-        setConsumption(base_consumption);
-        setPassengers(base_passengers);
-        console.log("After: ", vehicle, vehicleType, fuelType, fuel, consumption, passengers);
     }, []);
 
     useEffect(() => {
@@ -92,50 +197,34 @@ export default function Baseline({ navigation }) {
     }, [fuelType])
 
     const saveBaselineMethod = () => {
-        dispatch(setBaseVehicle(vehicle));
-
         //save vehicle_type only for cars, otherwise empty the value
-        if(vehicle === methods[3]){
-            dispatch(setBaseVehicleType(vehicleType));
-        }
-        else {
-            dispatch(setBaseVehicleType(''));
+        if(vehicle !== methods[3]){
+            setVehicleType('');
         }
 
-        //save fuel type only for car, moped and motorbike
-        if(vehicle === methods[3] || vehicle === methods[6] || vehicle === methods[7] ){
-            dispatch(setBaseFuelType(fuelType));
-        }
         //change fueltype to electricity for electric bike and electric scooter
-        else if(vehicle === methods[4] || vehicle === methods[5]){
-            dispatch(setBaseFuelType(3));
+        if(vehicle === methods[4] || vehicle === methods[5]){
+            setFuelType(fuelTypes[3]);
         }
-        else {
-            dispatch(setBaseFuelType(0));
+        //reset fuel type only for all other methods except car, moped and motorbike
+        else if(vehicle !== methods[3] || vehicle !== methods[6] || vehicle !== methods[7] ){
+            console.log("Setting fueltype");
+            setFuelType(fuelTypes[0]);
         }
 
         //save fuel only if it's relevant, otherwise clear the value
-        if(vehicle === methods[3] || vehicle === methods[4] || vehicle === methods[5] || vehicle === methods[6] || vehicle === methods[7] ){
-            dispatch(setBaseFuel(fuel));
-        }
-        else {
-            dispatch(setBaseFuel(''));
+        if(vehicle !== methods[3] || vehicle !== methods[4] || vehicle !== methods[5] || vehicle !== methods[6] || vehicle !== methods[7] ){
+            setFuel('');
         }
 
         //save consumption only if it's relevant, otherwise clear the value
-        if(vehicle === methods[3] || vehicle === methods[4] || vehicle === methods[5] || vehicle === methods[6] || vehicle === methods[7] ){
-            dispatch(setBaseConsumption(parseFloat(consumption)));
-        }
-        else {
-            dispatch(setBaseConsumption(0));
+        if(vehicle !== methods[3] || vehicle !== methods[4] || vehicle !== methods[5] || vehicle !== methods[6] || vehicle !== methods[7] ){
+            setConsumption(0);
         }
 
         //save passengers only if it's relevant, otherwise clear the value
-        if(vehicle === methods[3] || vehicle === methods[4] || vehicle === methods[5] || vehicle === methods[6] || vehicle === methods[7] ){
-            dispatch(setBasePassengers(parseInt(passengers)));
-        }
-        else {
-            dispatch(setBasePassengers(0));
+        if(vehicle !== methods[3] || vehicle !== methods[4] || vehicle !== methods[5] || vehicle !== methods[6] || vehicle !== methods[7] ){
+            setPassengers(1);
         }
         
         let methodToFind = "";
@@ -167,14 +256,16 @@ export default function Baseline({ navigation }) {
             default:
                 desiredUnit = 0;
         }
-        console.log("Fuelemissions:", desiredFuel.length !== 0 ? desiredFuel[0].emissions : 0);
+        //console.log("Fuelemissions:", desiredFuel.length !== 0 ? desiredFuel[0].emissions : 0);
         
-        dispatch(setBaseFuelEmission(desiredFuel.length !== 0 ? desiredFuel[0].emissions : 0));
+        const fuelEmissions = desiredFuel.length !== 0 ? desiredFuel[0].emissions : 0;
         console.log(methodToFind, desiredUnit, emission.filter(x => x.method === methodToFind && x.unit === desiredUnit));
-        dispatch(setBaseEmission(emission.filter(x => x.method === methodToFind && x.unit === desiredUnit)[0].emissions));
+        const emissions = emission.filter(x => x.method === methodToFind && x.unit === desiredUnit)[0].emissions;
+        updateData(vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions, baseLineExists);
     }
 
     useEffect(() => {
+        console.log("vehicle changed: ", vehicle);
         let avgConsumption;
         if(vehicle === "Car" && vehicleType?.length !== 0 && fuelType !== 0){
             console.log("arvot", vehicle, vehicleType, fuelType)
@@ -218,17 +309,15 @@ export default function Baseline({ navigation }) {
     }, [vehicle]);
 
     function getDefaultOption(list, defaultValue){
+        console.log("Getting default:", list, defaultValue);
         let defaultkey = Object.keys(list).find(key => list[key] === defaultValue);
         let defaultOption = {key: defaultkey?.toString(), value: defaultValue?.toString()};
+        console.log("Default option: ", defaultOption);
         return defaultOption;
     }
 
     function getConsumptionTitle(){
         console.log(fuelType === fuelTypes[1]);
-        if(fuelType === 0){
-            return "Consumption";
-        }
-
         if(fuelType === 1 || fuelType === "1" || fuelType === fuelTypes[1]){
             return `Consumption (${units[5]})`
         }
@@ -239,11 +328,11 @@ export default function Baseline({ navigation }) {
             return `Consumption (${units[7]})`
         }
         else {
-            return "Error";
+            return "Consumption";
         }
     }
 
-    //console.log("Tiedot", vehicle, vehicleType, fuelType, fuel, consumption, passengers);
+    console.log("Tiedot", vehicle, vehicleType, fuelType, fuel, consumption, passengers);
 
   return (
     <ScrollView style={{ backgroundColor: '#fff' }}>
@@ -252,10 +341,14 @@ export default function Baseline({ navigation }) {
         <Text>Transportation method</Text>
         <SelectList
             boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
-            setSelected={setVehicle} 
+            setSelected={(val) => {
+                console.log("CHOSEN: ", val)
+                setVehicle(val)
+            }} 
             data={methodsData} 
             save="value"
-            defaultOption={getDefaultOption(methods, base_vehicle)}
+            placeholder={vehicle}
+            value={() => getDefaultOption(methods, vehicle)}
         />
         {vehicle === methods[3] || vehicle === '3' ? 
             <View>
@@ -265,7 +358,8 @@ export default function Baseline({ navigation }) {
                     setSelected={(val) => setVehicleType(val)} 
                     data={carTypeData} 
                     save="value"
-                    defaultOption={getDefaultOption(carTypes, base_vehicle_type)}
+                    placeholder={vehicleType}
+                    value={carTypeData.filter(x => x.value === vehicleType)}
                 />
             </View>
             : 
@@ -277,11 +371,13 @@ export default function Baseline({ navigation }) {
                 <SelectList
                     boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
                     setSelected={(val) => {
+                        console.log("FUeltype:", val)
                         setFuelType(val);
                     }} 
                     data={fuelTypeData} 
                     save="value"
-                    defaultOption={getDefaultOption(fuelTypes, base_fuel_type)}
+                    placeholder={fuelType}
+                    defaultOption={() => fuelTypeData.filter(x => x.value === fuelType)}
                 />
             </View> : null
             }
@@ -293,13 +389,14 @@ export default function Baseline({ navigation }) {
                     setSelected={(val) => setFuel(val)} 
                     data={fuelData} 
                     save="value"
-                    defaultOption={getDefaultOption(base_fuel_type === fuelTypes[1] ? liquidFuels : base_fuel_type === fuelTypes[2] ? altFuels : electricityFuels, base_fuel)}
+                    placeholder={fuel}
+                    defaultOption={() => getDefaultOption(fuelType === fuelTypes[1] ? liquidFuels : fuelType === fuelTypes[2] ? altFuels : electricityFuels, fuel)}
                 />
                 <Text>{getConsumptionTitle()}</Text>
                 <TextInput
                     style={styles.input}
                     onChangeText={(val) => setConsumption(val)}
-                    defaultValue={base_consumption.toString()}
+                    defaultValue={consumption.toString()}
                     value={consumption.toString()}
                     keyboardType="decimal-pad"
                     inputMode="decimal"
@@ -309,7 +406,7 @@ export default function Baseline({ navigation }) {
                     style={styles.input}
                     onChangeText={(val) => setPassengers(val)}
                     keyboardType="number-pad"
-                    defaultValue={base_passengers.toString()}
+                    defaultValue={passengers.toString()}
                 />
             </View>
         : 

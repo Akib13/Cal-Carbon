@@ -14,6 +14,7 @@ import History from './screens/History';
 import Map from './screens/Map';
 import Result from './screens/Result';
 import Baseline from './screens/Baseline';
+import PastTrips from './screens/PastTrips';
 
 
 const Stack = createStackNavigator();
@@ -172,6 +173,7 @@ function HomeTabs() {
 
 const RootStack = createStackNavigator();
 
+
 const App = () => {
 
   return (
@@ -197,6 +199,21 @@ const App = () => {
         <RootStack.Screen
           name='Baseline'
           component={Baseline}
+          options={{ 
+            headerTitle:'CalCarbon',
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#fff',
+            },
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 30,
+            },
+          }}
+        />
+        <RootStack.Screen
+          name='PastTrips'
+          component={PastTrips}
           options={{ 
             headerTitle:'CalCarbon',
             headerTitleAlign: 'center',

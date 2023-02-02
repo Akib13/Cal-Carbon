@@ -49,13 +49,9 @@ export default function Settings({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
+          onPress={() => navigation.navigate('PastTrips')}
         >
           <Text style={styles.text}>Modify past trips</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-        >
-          <Text style={[styles.text, {color: '#f22'}]}>Reset emission data</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
