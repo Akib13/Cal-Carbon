@@ -21,53 +21,30 @@ const createTable = async () => {
     console.log("Creating table")
     await db.transaction((tx) => {
          tx.executeSql(
-            "CREATE TABLE IF NOT EXISTS Baseline "
-            + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, Vehicle TEXT, Vehicle_Type TEXT, Fuel_Type TEXT, Fuel TEXT, Consumption TEXT, Passengers INTEGER, Emission TEXT, Fuel_Emission TEXT);",
+            "CREATE TABLE IF NOT EXISTS DefaultMethod "
+            + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, Vehicle TEXT, Vehicle_Type TEXT, Fuel_Type TEXT, Fuel TEXT, Consumption TEXT, Passengers INTEGER);",
             () => {console.log("DONE WITH table ")},
                 error => {console.log(error)}
         );
     });
-    console.log("TABLE CREATED")
-     db.transaction((tx) => {
-        tx.executeSql("SELECT count(*) FROM MainDB WHERE type='table'",
-        (results) => {console.log("here", results)}
-        )
-    })
 };
 
-/*const createTable = () => {
-    console.log("creating table");
-    db.transaction(function (txn) {
-        txn.executeSql(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='Student_Table'",
-          [],
-          function (tx, res) {
-            console.log('item:', res);
-            if (res.rows.length !== 0) {
-              txn.executeSql('DROP TABLE IF EXISTS Student_Table', []);
-            }
-          }
-        );
-        console.log("After execute");
-      })
-      console.log('SQLite Database and Table Successfully Created...');
-    };*/
 
-const updateData = (vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions, baselineExists) => {
-    console.log("saving", vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions, baselineExists)
+const updateData = (vehicle, vehicleType, fuelType, fuel, consumption, passengers, defaultMethodExists) => {
+    console.log("saving", vehicle, vehicleType, fuelType, fuel, consumption, passengers, defaultMethodExists)
     db.transaction((tx) => {
-        if(baselineExists){
+        if(defaultMethodExists){
             tx.executeSql(
-                "UPDATE Baseline SET Vehicle=?, Vehicle_Type=?, Fuel_Type=?, Fuel=?, Consumption=?, Passengers=?, Emission=?, Fuel_Emission=? WHERE ID=1",
-                [vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions],
+                "UPDATE DefaultMethod SET Vehicle=?, Vehicle_Type=?, Fuel_Type=?, Fuel=?, Consumption=?, Passengers=? WHERE ID=1",
+                [vehicle, vehicleType, fuelType, fuel, consumption, passengers],
                 () => {console.log("Success!", "Your data has been updated.")},
                 error => {console.log(error)}
             );
         } else {
             console.log("adding to db")
             tx.executeSql(
-                "INSERT INTO Baseline ( Vehicle, Vehicle_Type, Fuel_Type, Fuel, Consumption, Passengers, Emission, Fuel_Emission) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                [vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions],
+                "INSERT INTO DefaultMethod ( Vehicle, Vehicle_Type, Fuel_Type, Fuel, Consumption, Passengers) VALUES (?, ?, ?, ?, ?, ?)",
+                [vehicle, vehicleType, fuelType, fuel, consumption, passengers],
                 (tx, results) => {console.log("Results", results)},
                 error => {console.log(error)}
             );
@@ -75,7 +52,7 @@ const updateData = (vehicle, vehicleType, fuelType, fuel, consumption, passenger
     })
 };
 
-export default function Baseline({ navigation }) {
+export default function DefaultMethod({ navigation }) {
 
     const { emission, fuels, electricity } = useSelector(state => state.tripReducer);
     const dispatch = useDispatch();
@@ -86,20 +63,20 @@ export default function Baseline({ navigation }) {
     const [fuel, setFuel] = useState("");
     const [consumption, setConsumption] = useState(0);
     const [passengers, setPassengers] = useState(1);
-    const [baseLineExists, setBaselineExists] = useState(false);
+    const [defaultMethodExists, setDefaultMethodExists] = useState(false);
 
     const getData = async () => {
         try {
             console.log("** GETTING DATA***");
            db.transaction((tx) => {
                 tx.executeSql(
-                    "SELECT * FROM Baseline",
+                    "SELECT * FROM DefaultMethod",
                     [],
                     (tx, results) => {
                         console.log("RESULTS: ", results.rows.length)
                         var len = results.rows.length;
                         if (len > 0) {
-                            setBaselineExists(true);
+                            setDefaultMethodExists(true);
                             console.log("FOUND DATA");
                             //var DB_id = results.rows.item(0).ID;
                             var db_vehicle = results.rows.item(0).Vehicle;
@@ -108,8 +85,6 @@ export default function Baseline({ navigation }) {
                             var db_fuel = results.rows.item(0).Fuel;
                             var db_cons = results.rows.item(0).Consumption;
                             var dbpsg = results.rows.item(0).Passengers;
-                            var dbemission = results.rows.item(0).Emission;
-                            var dbfuelemission = results.rows.item(0).Fuel_Emission;
     
                             //setID(DB_id);
                             setVehicle(db_vehicle);
@@ -118,7 +93,7 @@ export default function Baseline({ navigation }) {
                             setFuelType(db_fueltype);
                             setConsumption(db_cons);
                             setPassengers(dbpsg);
-                            console.log("*****DATA FROM DB******", db_vehicle, db_vehicleType, db_fueltype, db_fuel, db_cons, dbpsg, dbemission, dbfuelemission);
+                            console.log("*****DATA FROM DB******", db_vehicle, db_vehicleType, db_fueltype, db_fuel, db_cons, dbpsg);
                         }else{
                             console.log("DIDN*T FIND DATA");
                         }
@@ -196,7 +171,7 @@ export default function Baseline({ navigation }) {
         setFuelData(newFuelList);
     }, [fuelType])
 
-    const saveBaselineMethod = () => {
+    const saveDefaultMethod = () => {
         //save vehicle_type only for cars, otherwise empty the value
         if(vehicle !== methods[3]){
             setVehicleType('');
@@ -226,42 +201,7 @@ export default function Baseline({ navigation }) {
         if(vehicle !== methods[3] || vehicle !== methods[4] || vehicle !== methods[5] || vehicle !== methods[6] || vehicle !== methods[7] ){
             setPassengers(1);
         }
-        
-        let methodToFind = "";
-        if(vehicle === "Car"){
-            methodToFind = vehicleType;
-        }
-        else {
-            methodToFind = vehicle;
-        }
-
-        let desiredUnit = 0;
-        let desiredFuel = "";
-        switch(fuelType){
-            case fuelTypes[1]:
-                desiredUnit = 5;
-                desiredFuel = fuels.filter(x => x.fuel === fuel);
-                break;
-            case fuelTypes[2]:
-                desiredUnit = 6;
-                console.log(fuels);
-                desiredFuel = fuels.filter(x => x.fuel === fuel);
-                console.log(desiredFuel);
-                break;
-            case fuelTypes[3]:
-                desiredUnit = 7;
-                desiredFuel = electricity.filter(x => x.fuel === fuel);
-                methodToFind = vehicle;
-                break;
-            default:
-                desiredUnit = 0;
-        }
-        //console.log("Fuelemissions:", desiredFuel.length !== 0 ? desiredFuel[0].emissions : 0);
-        
-        const fuelEmissions = desiredFuel.length !== 0 ? desiredFuel[0].emissions : 0;
-        console.log(methodToFind, desiredUnit, emission.filter(x => x.method === methodToFind && x.unit === desiredUnit));
-        const emissions = emission.filter(x => x.method === methodToFind && x.unit === desiredUnit)[0].emissions;
-        updateData(vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions, baseLineExists);
+        updateData(vehicle, vehicleType, fuelType, fuel, consumption, passengers, defaultMethodExists);
     }
 
     useEffect(() => {
@@ -337,12 +277,11 @@ export default function Baseline({ navigation }) {
   return (
     <ScrollView style={{ backgroundColor: '#fff' }}>
     <View style={styles.body}>
-        <Text style={styles.header_text}>Add baseline</Text>
+        <Text style={styles.header_text}>Add default method</Text>
         <Text>Transportation method</Text>
         <SelectList
             boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
             setSelected={(val) => {
-                console.log("CHOSEN: ", val)
                 setVehicle(val)
             }} 
             data={methodsData} 
@@ -413,7 +352,7 @@ export default function Baseline({ navigation }) {
         null
         }
         <Button title='Save' onPress={() => {
-            saveBaselineMethod();
+            saveDefaultMethod();
             navigation.goBack();
             }
         } />

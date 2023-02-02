@@ -26,6 +26,8 @@ const db = SQLite.openDatabase(
 
 
 
+
+
 export default function Trip({ navigation }) {
 
     const { emission, trips, tripID, fuels, electricity } = useSelector(state => state.tripReducer);
@@ -43,12 +45,9 @@ export default function Trip({ navigation }) {
     const [distance, setDistance] = useState(0);
     const [iname, setIName] = useState("");
     const [fuelList, setFuelList] = useState(null);
-    const [tripEmissions, setTripEmissions] = useState(0);
+    const [saveToFavorites, setSaveToFavorites] = useState(false);
 
     const [test, setTest] = useState(""+date.toISOString().split('T')[0]);
-    
-
-    let total_emission;
   
     const data = [
         {key:'1', value: methods[1]},
@@ -85,6 +84,45 @@ export default function Trip({ navigation }) {
         {name: 'Gym'},
         {name: 'Other'},
     ];
+
+    const getDefaultMethod = () => {
+        try {
+            console.log("** GETTING DATA***");
+           db.transaction((tx) => {
+                tx.executeSql(
+                    "SELECT * FROM DefaultMethod",
+                    [],
+                    (tx, results) => {
+                        console.log("RESULTS: ", results.rows.length)
+                        var len = results.rows.length;
+                        if (len > 0) {
+                            //setDefaultMethodExists(true);
+                            console.log("FOUND DATA");
+                            //var DB_id = results.rows.item(0).ID;
+                            var db_vehicle = results.rows.item(0).Vehicle;
+                            var db_vehicleType = results.rows.item(0).Vehicle_Type;
+                            var db_fueltype = results.rows.item(0).Fuel_Type;
+                            var db_fuel = results.rows.item(0).Fuel;
+                            var db_cons = results.rows.item(0).Consumption;
+                            var dbpsg = results.rows.item(0).Passengers;
+    
+                            setVehicle(db_vehicle);
+                            setCar(db_vehicleType);
+                            setFuel(db_fuel);
+                            setFuelType(db_fueltype);
+                            setConsumption(db_cons);
+                            setPassengers(dbpsg);
+                            console.log("*****DATA FROM DB******", db_vehicle, db_vehicleType, db_fueltype, db_fuel, db_cons, dbpsg);
+                        }else{
+                            console.log("DIDN*T FIND DATA");
+                        }
+                    }
+                )
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         let temp = [];
@@ -145,6 +183,7 @@ export default function Trip({ navigation }) {
         createTable();
         dispatch(getFuels());
         dispatch(getElectricity());
+        getDefaultMethod();
         //date_converter();
         //getTrip();
     }, []);
@@ -159,87 +198,20 @@ export default function Trip({ navigation }) {
         })
     };
 
-    const getTrip = () => {
-        /*const Trip = trips.find(trip => trip.ID === tripID);
-        if (Trip) {
-            setVehicle(Trip.Vehicle);
-            setCar(Trip.Car);
-            setFuel(Trip.Fuel);
-            //setDate(Trip.Date);
-            setTest(Trip.Test);
-            setIName(Trip.Iname);*/
-        //}
-        try {
-            db.transaction((tx) => {
-                tx.executeSql(
-                    "SELECT ID, Vehicle, Vehicle_Type, Fuel, Distance, Date, Category FROM Trips WHERE ID=1",
-                    [],
-                    (tx, results) => {
-                        var len = results.rows.length;
-                        if (len > 0) {
-                            //var DB_id = results.rows.item(0).ID;
-                            var db_vehicle = results.rows.item(0).Vehicle;
-                            var db_distance = results.rows.item(0).Distance;
-                            var db_category = results.rows.item(0).Category;
-                            var db_vehicleType = results.rows.item(0).Vehicle_Type;
-                            var db_fuel = results.rows.item(0).Fuel;
-                            var dbDate = results.rows.item(0).Date;
     
-                            //setID(DB_id);
-                            setVehicle(db_vehicle);
-                            setDistance(db_distance);
-                            setIName(db_category);
-                            setFuel(db_fuel);
-                            setCar(db_vehicleType);
-                            setTest(dbDate);
-                        }
-                    }
-                )
-            })
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     const setTrip = async () => {
         if (vehicle.length == 0) {
             Alert.alert('warning', 'Please write your task title.')
         }
         else {
             try {
-                /*var Trip = {
-                    ID: tripID,
-                    Vehicle: vehicle,
-                    Car: car,
-                    Fuel: fuel,
-                    //Date: date,
-                    Test: test,
-                    Iname: iname,
-                }*/
-                /*const index = trips.findIndex(trip => trip.ID === tripID);
-                let newTrips = [];
-                if (index > -1) {
-                    newTrips = [...trips];
-                    newTrips[index] = Trip;
-                } else {
-                    newTrips = [...trips, Trip];
-                }*/
-
-                /*AsyncStorage.setItem('Trips', JSON.stringify(newTrips))
-                .then(() => {
-                    dispatch(setTrips(newTrips));
-                    Alert.alert('Success!', 'Task saved successfully.');
-                    setFavorites(false);
-                    navigation.goBack();
-                })
-                .catch(error => console.log(error))*/
                 console.log("-----SETTING TRIP-------");
                 console.log("Date: " + date);
 
                 await db.transaction( async (tx) => {
                     await tx.executeSql(
                         "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel, Distance, Date, Category, Emission) VALUES (?,?,?,?,?,?,?)",
-                        [vehicle, car, fuel, distance, test, iname, calculate()]
+                        [vehicle, car, fuel, distance, test, saveToFavorites ? iname : null, calculate()]
                     );
                 })
                 //navigation.navigate("Map");
@@ -249,21 +221,9 @@ export default function Trip({ navigation }) {
         }
     };
 
-    /*const date_converter = () => {
-        var date_test = date;
-        const new_date = date_test.toISOString().split('T')[0]; //date_test.toISOString().substring(0, 10);
-        console.log(new_date);
-        setTest(new_date);
-
-        var d = date;
-        d = new Date(d.getTime() - 3000000);
-        var date_format_str = d.getFullYear().toString()+"-"+((d.getMonth()+1).toString().length==2?(d.getMonth()+1).toString():"0"+(d.getMonth()+1).toString())+"-"+(d.getDate().toString().length==2?d.getDate().toString():"0"+d.getDate().toString())+" "+(d.getHours().toString().length==2?d.getHours().toString():"0"+d.getHours().toString())+":"+((parseInt(d.getMinutes()/5)*5).toString().length==2?(parseInt(d.getMinutes()/5)*5).toString():"0"+(parseInt(d.getMinutes()/5)*5).toString())+":00";
-        console.log(date_format_str.substring(0,10));
-    }*/
 
     const calculate = () => {
         let methodToFind = "";
-        console.log("CALCULATING", fuel);
         if(vehicle === "Car"){
             methodToFind = car;
         }
@@ -320,6 +280,7 @@ export default function Trip({ navigation }) {
             }} 
             data={data} 
             save="value"
+            placeholder={vehicle}
         />
         {vehicle === 'Car' ? 
             <View>
@@ -329,6 +290,7 @@ export default function Trip({ navigation }) {
                     setSelected={(val) => setCar(val)} 
                     data={carTypeData} 
                     save="value"
+                    placeholder={car}
                 />
             </View> : null}
         {vehicle !== methods[1] && vehicle !== methods[2] && vehicle !== methods[8] && vehicle !== methods[9] && vehicle !== methods[10]? 
@@ -342,6 +304,7 @@ export default function Trip({ navigation }) {
                     }} 
                     data={fuelTypeData} 
                     save="value"
+                    placeholder={fuelType}
                 />
                 <Text>{fuelType === fuelTypes[3] ? "Fuel for generating electricity" : "Fuel"}</Text>
                 <SelectList
@@ -349,6 +312,7 @@ export default function Trip({ navigation }) {
                     setSelected={(val) => setFuel(val)} 
                     data={fuelList} 
                     save="value"
+                    placeholder={fuel}
                 />
                 <Text>{`Consumption (${fuelType === fuelTypes[1] ? units[5] : fuelType === fuelTypes[2] ? units[6] : units[7]})`}</Text>
                 <TextInput
@@ -363,6 +327,7 @@ export default function Trip({ navigation }) {
                     style={styles.input}
                     onChangeText={(val) => setPassengers(val.replace(/[^0-9]/g, ''))}
                     value={passengers}
+                    defaultValue={passengers.toString()}
                     keyboardType="decimal-pad"
                 />
             </View>
@@ -409,8 +374,11 @@ export default function Trip({ navigation }) {
 
         <View style = {styles.checkbox}>
             <CheckBox 
-                value={favorites}
-                onValueChange={(newValue) => setFavorites(newValue)}
+                value={saveToFavorites}
+                onValueChange={(newValue) => {
+                    setSaveToFavorites(newValue);
+                    setFavorites(newValue);
+                }}
             />
             <Text style={styles.text}>
                 Add to favorites

@@ -33,6 +33,7 @@ export default function Settings({ navigation }) {
       <View style={styles.page_view}>
         <TouchableOpacity
           style={styles.button}
+          onPress={() => navigation.navigate('DefaultMethod')}
         >
           <Text style={styles.text}>Default Method</Text>
         </TouchableOpacity>
@@ -41,11 +42,6 @@ export default function Settings({ navigation }) {
           onPress={onPressHandler}
         >
           <Text style={styles.text}>Baseline</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-        >
-          <Text style={styles.text}>Manage saved trips</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}

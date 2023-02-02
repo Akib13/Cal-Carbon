@@ -35,29 +35,6 @@ export default function Result({ route, navigation }) {
   const getData = () => {
     try {
         db.transaction((tx) => {
-            /*tx.executeSql(
-                "SELECT ID, Vehicle, Vehicle_Type, Fuel, Distance, Category FROM Trips",
-                [],
-                (tx, results) => {
-                    var len = results.rows.length;
-                    if (len > 0) {
-                        var DB_id = results.rows.item(0).ID;
-                        var vehicle = results.rows.item(0).Vehicle;
-                        var distance = results.rows.item(0).Distance;
-                        var db_category = results.rows.item(0).Category;
-                        var vehicleType = results.rows.item(0).Vehicle_Type;
-                        var fuel = results.rows.item(0).Fuel;
-                        //var DBemission = results.rows.item(0).Emission;
-
-                        setID(DB_id);
-                        setVehicle(vehicle);
-                        setDistance(distance);
-                        setIName(db_category);
-                        setFuel(fuel);
-                        setCar(vehicleType);
-                    }
-                }
-            )*/
             tx.executeSql(
               "SELECT ID FROM Trips WHERE Vehicle=? AND Vehicle_Type=? AND Fuel=?",
               [route.params.vehicle, route.params.car, route.params.fuel],
@@ -81,11 +58,6 @@ export default function Result({ route, navigation }) {
     }
     else {
         try {
-            /*var user = {
-                Name: name
-            }
-            await AsyncStorage.mergeItem('UserData', JSON.stringify(user));
-            Alert.alert("Success!", "Your data has been updated.");*/
             console.log("Saving data");
             db.transaction((tx)=> {
                 tx.executeSql(
@@ -108,11 +80,32 @@ export default function Result({ route, navigation }) {
     }
   };
 
-  const calculate = (a_emission) => {
-    const distance = route.params.distance, avg_emission = a_emission, passengers = 1;
-    total_emission = (distance * avg_emission)/passengers;
-    return (total_emission);
-  };
+  const comparisonOfResults = () => {
+    const baselineEmissions = calculate_base();
+    const actualEmissions = parseFloat(route.params.total_emission)
+    console.log(route.params.total_emission, baselineEmissions)
+    if(actualEmissions < baselineEmissions){
+      return(
+        <View style={styles.result_container} borderColor="green">
+          <Text>You saved {baselineEmissions - actualEmissions} kg of CO2e emissions during this trip. Good job!</Text>
+        </View>
+
+      );
+    } else if(actualEmissions > baselineEmissions){
+      return(
+        <View style={styles.result_container} borderColor="red">
+          <Text style={{textAlign: 'center', textShadowColor: "black", textShadowOffset: {width: 1, height: 1}}}>You emitted {actualEmissions - baselineEmissions} kg more of CO2e during this trip than you would have using your baseline method. Try to stick to less emitting methods next time!</Text>
+        </View>
+      );
+    } else {
+      return(
+        <View style={styles.result_container} borderColor="green">
+          <Text>Your emisions were equal to your baseline method emissions. Good job!</Text>
+        </View>
+      );
+    }
+  }
+
 
   const calculate_base = () => {
     //get type of car in case base_vehicle is simply car, use base_vechicle in other cases
@@ -129,17 +122,18 @@ export default function Result({ route, navigation }) {
           {route.params.total_emission} g CO2 -ekv
         </Text>
       </View>
-      <Text>{base_vehicle}, {base_vehicle_type}, {base_fuel}</Text>
       <Text style={styles.mid_text}>Baseline Emissions</Text>
       <View>
         <Text style={styles.result_text}>
           {calculate_base()} g CO2 -ekv
         </Text>
       </View>
-    <Button title='save' onPress={updateData}/>
-    <Button title='Done' onPress={() => {navigation.navigate('Map', { 
-      emsn: total_emission
-      })}}/>
+      <View>
+        {comparisonOfResults()}
+      </View>
+    <Button title='Done' onPress={() => {
+      updateData();
+      navigation.navigate('Map')}}/>
     </View>
   )
 }
@@ -154,7 +148,7 @@ const styles = StyleSheet.create({
   top_text: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: "25%",
+    marginBottom: "15%",
   },
   mid_text: {
     fontSize: 18,
@@ -162,6 +156,12 @@ const styles = StyleSheet.create({
   },
   result_text: {
     fontSize: 18,
-    marginBottom: '5%'
+    marginBottom: '10%'
+  },
+  result_container: {
+    fontSize: 15,
+    borderWidth: 1,
+    padding: 5,
+    marginBottom: "5%"
   }
 });

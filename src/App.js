@@ -15,6 +15,7 @@ import Map from './screens/Map';
 import Result from './screens/Result';
 import Baseline from './screens/Baseline';
 import PastTrips from './screens/PastTrips';
+import DefaultMethod from './screens/DefaultMethod';
 
 
 const Stack = createStackNavigator();
@@ -214,6 +215,21 @@ const App = () => {
         <RootStack.Screen
           name='PastTrips'
           component={PastTrips}
+          options={{ 
+            headerTitle:'CalCarbon',
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#fff',
+            },
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 30,
+            },
+          }}
+        />
+        <RootStack.Screen
+          name='DefaultMethod'
+          component={DefaultMethod}
           options={{ 
             headerTitle:'CalCarbon',
             headerTitleAlign: 'center',
