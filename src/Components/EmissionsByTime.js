@@ -332,6 +332,8 @@ export default function EmissionsByTime({data, chartConfig, timeFrame, loading})
                 withCustomBarColorFromData={true}
                 fromZero={true}
                 flatColor={true}
+                showValuesOnTopOfBars={true}
+                showBarTops={true}
               />}
             </View>);
 }

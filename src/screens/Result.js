@@ -63,7 +63,7 @@ export default function Result({ route, navigation }) {
                 tx.executeSql(
                     "UPDATE Trips SET Emission=? WHERE ID=?",
                     [route.params.total_emission, Id],
-                    () => {Alert.alert("Success!", "Your data has been updated.")},
+                    () => {},
                     error => {console.log(error)}
                 );
                 tx.executeSql('SELECT * FROM Trips', [], (tx, results) => {
@@ -84,17 +84,25 @@ export default function Result({ route, navigation }) {
     const baselineEmissions = calculate_base();
     const actualEmissions = parseFloat(route.params.total_emission)
     console.log(route.params.total_emission, baselineEmissions)
+    if(base_vehicle.length === 0){
+      return(
+        <View style={styles.result_container}>
+          <Text>Set your baseline method in the settings to compare your emissions to your baseline emissions</Text>
+        </View>
+
+      );
+    }
     if(actualEmissions < baselineEmissions){
       return(
         <View style={styles.result_container} borderColor="green">
-          <Text>You saved {baselineEmissions - actualEmissions} kg of CO2e emissions during this trip. Good job!</Text>
+          <Text>You saved {(baselineEmissions - actualEmissions).toFixed(2)} kg of CO2e emissions during this trip. Good job!</Text>
         </View>
 
       );
     } else if(actualEmissions > baselineEmissions){
       return(
         <View style={styles.result_container} borderColor="red">
-          <Text style={{textAlign: 'center', textShadowColor: "black", textShadowOffset: {width: 1, height: 1}}}>You emitted {actualEmissions - baselineEmissions} kg more of CO2e during this trip than you would have using your baseline method. Try to stick to less emitting methods next time!</Text>
+          <Text style={{textAlign: 'center', textShadowColor: "black", textShadowOffset: {width: 1, height: 1}}}>You emitted {(actualEmissions - baselineEmissions).toFixed(2)} kg more of CO2e during this trip than you would have using your baseline method. Try to stick to less emitting methods next time!</Text>
         </View>
       );
     } else {

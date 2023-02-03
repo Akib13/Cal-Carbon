@@ -17,7 +17,7 @@ export default function Settings({ navigation }) {
   };
 
   const onPressDelete = () => {
-    const del = SQLite.deleteDatabase(
+    SQLite.deleteDatabase(
       {name: 'MainDB', location: 'default'},  
       () => { console.log('db deleted');  },
       error => {

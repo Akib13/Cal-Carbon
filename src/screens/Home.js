@@ -21,7 +21,7 @@ const db = SQLite.openDatabase(
 
 export default function Home({ navigation }) {
 
-  const [test, setTest] = useState('');
+  const [test, setTest] = useState(0);
   const dispatch = useDispatch();
   const { base_vehicle } = useSelector(state => state.tripReducer);
 

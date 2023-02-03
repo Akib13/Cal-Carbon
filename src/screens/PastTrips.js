@@ -90,7 +90,7 @@ export default function PastTrips(){
     }, [])
 
         return(
-            <View>
+            <View style={{backgroundColor: 'white'}}>
                 {trips.length === 0 ? <Text>No trips available</Text> : 
                 <View>
                     <View style={{flexDirection: 'row', flexWrap: 'wrap', textAlign: 'center', justifyContent: 'space-evenly'}}>

@@ -335,6 +335,7 @@ export default function TotalKilometers({data, chartConfig, timeFrame, loading})
                   fromZero={true}
                   showBarTops={false}
                   showValuesOnTopOfBars={true}
+                  flatColor={true}
                 />
               </View>);
 }

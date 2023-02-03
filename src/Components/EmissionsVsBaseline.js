@@ -176,7 +176,7 @@ function getEmissionComparison(emissions, baselineEmissions){
   let result = [];
   for (let i = 0; i < emissions.length; i++){
     console.log(emissions[i], baselineEmissions[i]);
-    result.push(emissions[i] /1000 - baselineEmissions[i]);
+    result.push(baselineEmissions[i] - emissions[i]);
   }
   console.log(result)
   return result;

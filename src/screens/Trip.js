@@ -159,6 +159,10 @@ export default function Trip({ route, navigation }) {
     }, [fuelType]);
 
     useEffect(() => {
+        if(vehicle === methods[4] || vehicle === methods[5]){
+            setFuelType(fuelTypes[3]);
+        }
+
         let avgConsumption;
         if(vehicle === "Car" && car.length !== 0 && fuelType !== 0){
             console.log("arvot", vehicle, car, fuelType)
@@ -205,7 +209,7 @@ export default function Trip({ route, navigation }) {
             tx.executeSql(
                 "CREATE TABLE IF NOT EXISTS "
                 + "Trips "
-                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, Vehicle TEXT, Vehicle_Type TEXT, Fuel TEXT, Consumption TEXT, Passengers INTEGER, Distance INTEGER, Date TEXT, Category TEXT, Emission INTEGER);"
+                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, Vehicle TEXT, Vehicle_Type TEXT, Fuel_Type TEXT, Fuel TEXT, Consumption TEXT, Passengers INTEGER, Distance INTEGER, Date TEXT, Category TEXT, Emission INTEGER);"
             )
         })
     };
@@ -227,8 +231,8 @@ export default function Trip({ route, navigation }) {
 
                 await db.transaction( async (tx) => {
                     await tx.executeSql(
-                        "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel, Consumption, Distance, Passengers, Date, Category, Emission) VALUES (?,?,?,?,?,?,?,?)",
-                        [vehicle, car, fuel, consumption, distance, passengers, test, iname, calculate()]
+                        "INSERT INTO Trips (Vehicle, Vehicle_Type, Fuel_Type, Fuel, Consumption, Distance, Passengers, Date, Category, Emission) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                        [vehicle, car, fuelType, fuel, consumption, distance, passengers, test, iname, calculate()]
                     );
                 })
                 //navigation.navigate("Map");
@@ -310,7 +314,7 @@ export default function Trip({ route, navigation }) {
                     placeholder={car}
                 />
             </View> : null}
-        {vehicle !== methods[1] && vehicle !== methods[2] && vehicle !== methods[8] && vehicle !== methods[9] && vehicle !== methods[10]? 
+        {vehicle !== methods[1] && vehicle !== methods[2] && vehicle !== methods[4] && vehicle !== methods[5] && vehicle !== methods[8] && vehicle !== methods[9] && vehicle !== methods[10]? 
             <View>
                 <Text>Type of fuel</Text>
                 <SelectList
@@ -323,6 +327,9 @@ export default function Trip({ route, navigation }) {
                     save="value"
                     placeholder={fuelType}
                 />
+            </View>: null}
+            {vehicle !== methods[1] && vehicle !== methods[2] && vehicle !== methods[8] && vehicle !== methods[9] && vehicle !== methods[10]? 
+            <View>
                 <Text>{fuelType === fuelTypes[3] ? "Fuel for generating electricity" : "Fuel"}</Text>
                 <SelectList
                     boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}

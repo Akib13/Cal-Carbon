@@ -35,23 +35,6 @@ const createTable = async () => {
     })
 };
 
-/*const createTable = () => {
-    console.log("creating table");
-    db.transaction(function (txn) {
-        txn.executeSql(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='Student_Table'",
-          [],
-          function (tx, res) {
-            console.log('item:', res);
-            if (res.rows.length !== 0) {
-              txn.executeSql('DROP TABLE IF EXISTS Student_Table', []);
-            }
-          }
-        );
-        console.log("After execute");
-      })
-      console.log('SQLite Database and Table Successfully Created...');
-    };*/
 
 const updateData = (vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions, baselineExists) => {
     console.log("saving", vehicle, vehicleType, fuelType, fuel, consumption, passengers, emissions, fuelEmissions, baselineExists)
@@ -265,7 +248,10 @@ export default function Baseline({ navigation }) {
     }
 
     useEffect(() => {
-        console.log("vehicle changed: ", vehicle);
+        if(vehicle === methods[4] || vehicle === methods[5]){
+            setFuelType(fuelTypes[3]);
+        }
+
         let avgConsumption;
         if(vehicle === "Car" && vehicleType?.length !== 0 && fuelType !== 0){
             console.log("arvot", vehicle, vehicleType, fuelType)
@@ -370,10 +356,7 @@ export default function Baseline({ navigation }) {
                 <Text>Type of fuel</Text>
                 <SelectList
                     boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
-                    setSelected={(val) => {
-                        console.log("FUeltype:", val)
-                        setFuelType(val);
-                    }} 
+                    setSelected={(val) => {setFuelType(val);}} 
                     data={fuelTypeData} 
                     save="value"
                     placeholder={fuelType}
@@ -381,17 +364,22 @@ export default function Baseline({ navigation }) {
                 />
             </View> : null
             }
-            {vehicle === methods[3] || vehicle === methods[4] || vehicle === methods[5] || vehicle === methods[6] || vehicle === methods[7] ? 
+            {vehicle !== methods[1] && vehicle !== methods[2] && vehicle !== methods[4] && vehicle !== methods[5] && vehicle !== methods[8] && vehicle !== methods[9] && vehicle !== methods[10]? 
             <View>
-                <Text>{fuelType === fuelTypes[3] ? "Fuel for generating electricity" : "Fuel"}</Text>
+                <Text>Type of fuel</Text>
                 <SelectList
                     boxStyles={{ borderColor:'#fff', borderBottomColor: '#000', borderRadius: 0, marginBottom: 10 }}
-                    setSelected={(val) => setFuel(val)} 
-                    data={fuelData} 
+                    setSelected={(val) => {
+                        setFuelType(val);
+                        setFuel("");
+                    }} 
+                    data={fuelTypeData} 
                     save="value"
-                    placeholder={fuel}
-                    defaultOption={() => getDefaultOption(fuelType === fuelTypes[1] ? liquidFuels : fuelType === fuelTypes[2] ? altFuels : electricityFuels, fuel)}
+                    placeholder={fuelType}
                 />
+            </View>: null}
+            {vehicle !== methods[1] && vehicle !== methods[2] && vehicle !== methods[8] && vehicle !== methods[9] && vehicle !== methods[10]? 
+            <View>
                 <Text>{getConsumptionTitle()}</Text>
                 <TextInput
                     style={styles.input}
