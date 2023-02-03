@@ -136,7 +136,7 @@ export default function Result({ route, navigation }) {
           {calculate_base()} kg CO2 -ekv
         </Text>
       </View>
-      <View>
+      <View style={{marginHorizontal: 10}}>
         {comparisonOfResults()}
       </View>
     <Button title='Done' onPress={() => {
