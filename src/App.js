@@ -13,6 +13,9 @@ import Trip from './screens/Trip';
 import History from './screens/History';
 import Map from './screens/Map';
 import Result from './screens/Result';
+import Baseline from './screens/Baseline';
+import PastTrips from './screens/PastTrips';
+import DefaultMethod from './screens/DefaultMethod';
 
 
 const Stack = createStackNavigator();
@@ -171,6 +174,7 @@ function HomeTabs() {
 
 const RootStack = createStackNavigator();
 
+
 const App = () => {
 
   return (
@@ -191,6 +195,51 @@ const App = () => {
           component={HomeTabs}
           options = {{
             headerShown: false,
+          }}
+        />
+        <RootStack.Screen
+          name='Baseline'
+          component={Baseline}
+          options={{ 
+            headerTitle:'CalCarbon',
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#fff',
+            },
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 30,
+            },
+          }}
+        />
+        <RootStack.Screen
+          name='PastTrips'
+          component={PastTrips}
+          options={{ 
+            headerTitle:'CalCarbon',
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#fff',
+            },
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 30,
+            },
+          }}
+        />
+        <RootStack.Screen
+          name='DefaultMethod'
+          component={DefaultMethod}
+          options={{ 
+            headerTitle:'CalCarbon',
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#fff',
+            },
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 30,
+            },
           }}
         />
       </RootStack.Navigator>
